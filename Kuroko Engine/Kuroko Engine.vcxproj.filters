@@ -411,6 +411,12 @@
     <ClInclude Include="MD5.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Sources\Containers</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentShader.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -640,6 +646,12 @@
     </ClCompile>
     <ClCompile Include="MD5.cpp">
       <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Sources\Containers</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentShader.cpp">
+      <Filter>Sources\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

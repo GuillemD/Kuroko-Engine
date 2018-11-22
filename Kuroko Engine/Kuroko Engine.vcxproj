@@ -14,7 +14,7 @@
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>
     <RootNamespace>SDLGame</RootNamespace>
     <ProjectName>Kuroko Engine</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,6 +81,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentAABB.h" />
     <ClInclude Include="ComponentCamera.h" />
+    <ClInclude Include="ComponentShader.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="GameObject.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="ResourceMesh.h" />
     <ClInclude Include="ResourceScene.h" />
     <ClInclude Include="ResourceTexture.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
@@ -195,6 +197,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentAABB.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
+    <ClCompile Include="ComponentShader.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -262,6 +265,7 @@
     <ClCompile Include="ResourceMesh.cpp" />
     <ClCompile Include="ResourceScene.cpp" />
     <ClCompile Include="ResourceTexture.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />

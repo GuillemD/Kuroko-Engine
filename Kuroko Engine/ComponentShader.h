@@ -1,0 +1,5 @@
+#ifndef _COMPONENTSHADER_H_
+#define _COMPONENTSHADER_H_
+
+
+#endif // !_COMPONENTSHADER_H_
