@@ -414,7 +414,7 @@
     <ClInclude Include="Shader.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentShader.h">
+    <ClInclude Include="ShaderProgram.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
   </ItemGroup>
@@ -650,7 +650,7 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentShader.cpp">
+    <ClCompile Include="ShaderProgram.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
   </ItemGroup>

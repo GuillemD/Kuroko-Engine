@@ -81,7 +81,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentAABB.h" />
     <ClInclude Include="ComponentCamera.h" />
-    <ClInclude Include="ComponentShader.h" />
+    <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="GameObject.h" />
@@ -197,7 +197,7 @@
     <ClCompile Include="Color.cpp" />
     <ClCompile Include="ComponentAABB.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
-    <ClCompile Include="ComponentShader.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
