@@ -10,6 +10,23 @@
 
 Shader::Shader(ShaderType type) : type(type)
 {
+	source = new char[2048];
+
+	switch (type)
+	{
+	case VERTEX:
+	{
+		strcpy_s(source, 2048, vertex_default);
+	}
+	break;
+	case FRAGMENT:
+	{
+		strcpy_s(source, 2048, fragment_default);
+	}
+	break;
+	default:
+		break;
+	}
 
 }
 
@@ -17,7 +34,7 @@ Shader::~Shader()
 {
 }
 
-uint Shader::CreateVertexShader(const char* ShaderSource)
+void Shader::CreateVertexShader(const char* ShaderSource)
 {
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -32,14 +49,14 @@ uint Shader::CreateVertexShader(const char* ShaderSource)
 		//LOG("Shader compilation error: %s", infoLog);
 		glDeleteShader(vertexShader);
 		compile_success = false;
-		return 0;
+		id = 0;
 
 	}
 	compile_success = true;
-	return vertexShader;
+	id = vertexShader;
 }
 
-uint Shader::CreateFragmentShader(const char* ShaderSource)
+void Shader::CreateFragmentShader(const char* ShaderSource)
 {
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -54,10 +71,10 @@ uint Shader::CreateFragmentShader(const char* ShaderSource)
 		//LOG("Shader compilation error: %s", infoLog);
 		glDeleteShader(fragmentShader);
 		compile_success = false;
-		return 0;
+		id = 0;
 
 	}
 	compile_success = true;
-	return fragmentShader;
+	id = fragmentShader;
 }
 

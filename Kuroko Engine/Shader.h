@@ -10,8 +10,8 @@ public:
 	Shader(ShaderType type);
 	~Shader();
 
-	uint CreateVertexShader(const char* ShaderSource);
-	uint CreateFragmentShader(const char* ShaderSource);
+	void CreateVertexShader(const char* ShaderSource);
+	void CreateFragmentShader(const char* ShaderSource);
 
 	uint getId() const { return id; };
 	ShaderType getType() const { return type; };
@@ -19,7 +19,7 @@ public:
 private:
 	
 	ShaderType type = UNKNOWN;
-	const uint id = 0;
+	uint id = 0;
 	bool compile_success = false;
 	char* source = nullptr;
 
