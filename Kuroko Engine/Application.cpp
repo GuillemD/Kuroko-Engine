@@ -27,10 +27,12 @@ Application::Application()
 	CreateDirectory("Library\\Meshes", NULL);
 	CreateDirectory("Library\\Textures", NULL);
 	CreateDirectory("Library\\Prefabs", NULL);
+	CreateDirectory("Library\\Shaders", NULL);
 
 
 	CreateDirectory("Assets", NULL);
 	CreateDirectory("Assets\\Scenes", NULL);
+	CreateDirectory("Assets\\Shaders", NULL);
 
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);

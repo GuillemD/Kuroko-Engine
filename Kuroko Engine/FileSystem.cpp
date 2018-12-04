@@ -72,6 +72,9 @@ void FileSystem::FormFullPath(std::string & path, const char * file_name, lib_di
 	case LIBRARY_PREFABS:
 		path = PREFABS_FOLDER;
 		break;
+	case LIBRARY_SHADERS:
+		path = SHADERS_FOLDER;
+		break;
 	case SETTINGS:
 		path = SETTINGS_FOLDER;
 		break;
@@ -160,6 +163,9 @@ std::string FileSystem::getPathFromLibDir(lib_dir lib_dir) {
 		break;
 	case LIBRARY_PREFABS:
 		ret = PREFABS_FOLDER;
+		break;
+	case LIBRARY_SHADERS:
+		ret = SHADERS_FOLDER;
 		break;
 	case SETTINGS:
 		ret = SETTINGS_FOLDER;

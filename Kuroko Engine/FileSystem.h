@@ -8,19 +8,24 @@
 #define JSON_EXTENSION ".json"
 #define DDS_EXTENSION ".dds"
 #define META_EXTENSION ".meta"
+#define VERTEX_SHADER_EXTENSION ".vert"
+#define FRAGMENT_SHADER_EXTENSION ".frag"
 
 #define LIBRARY_FOLDER "Library\\"
 #define MESHES_FOLDER "Library\\Meshes\\"
 #define TEXTURES_FOLDER "Library\\Textures\\"
 #define PREFABS_FOLDER "Library\\Prefabs\\"
+#define SHADERS_FOLDER "Library\\Shaders\\"
 #define SETTINGS_FOLDER "Settings\\"
 #define SCENES_FOLDER "Assets\\Scenes\\"
 #define ASSETS_FOLDER "Assets\\"
+
 
 enum lib_dir {
 	LIBRARY_MESHES,
 	LIBRARY_TEXTURES,
 	LIBRARY_PREFABS,
+	LIBRARY_SHADERS,
 	SETTINGS,
 	ASSETS,
 	ASSETS_SCENES,
