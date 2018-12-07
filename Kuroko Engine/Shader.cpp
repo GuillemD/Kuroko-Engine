@@ -17,11 +17,21 @@ Shader::Shader(ShaderType type) : type(type)
 	case VERTEX:
 	{
 		strcpy_s(source, 2048, vertex_default);
+		CreateVertexShader(source);
+		if (compile_success)
+		{
+			//UpdateShader();
+		}
 	}
 	break;
 	case FRAGMENT:
 	{
 		strcpy_s(source, 2048, fragment_default);
+		CreateFragmentShader(source);
+		if (compile_success)
+		{
+			//UpdateShader();
+		}
 	}
 	break;
 	default:
@@ -46,7 +56,7 @@ void Shader::CreateVertexShader(const char* ShaderSource)
 	if (success == 0)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		//LOG("Shader compilation error: %s", infoLog);
+		app_log->AddLog("Shader compilation error: %s", infoLog);
 		glDeleteShader(vertexShader);
 		compile_success = false;
 		id = 0;
@@ -68,7 +78,7 @@ void Shader::CreateFragmentShader(const char* ShaderSource)
 	if (success == 0)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		//LOG("Shader compilation error: %s", infoLog);
+		app_log->AddLog("Shader compilation error: %s", infoLog);
 		glDeleteShader(fragmentShader);
 		compile_success = false;
 		id = 0;
