@@ -19,6 +19,7 @@ class ModuleImporter;
 class ModuleDebug;
 class ModuleTimeManager;
 class ModuleResourcesManager;
+class ModuleShadersManager;
 
 class Application
 {
@@ -34,6 +35,7 @@ public:
 	ModuleImporter* importer;
 	ModuleTimeManager* time;
 	ModuleResourcesManager* resources;
+	ModuleShadersManager* shaders;
 
 	FileSystem fs;
 private:

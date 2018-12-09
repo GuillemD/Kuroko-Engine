@@ -13,6 +13,7 @@
 #include "Random.h"
 #include "ModuleTimeManager.h"
 #include "ModuleResourcesManager.h"
+#include "ModuleShadersManager.h"
 #include <Windows.h>
 #include <iostream>
 #include <fstream>
@@ -45,7 +46,9 @@ Application::Application()
 	camera = new ModuleCamera3D(this);
 	gui = new ModuleUI(this);
 	time = new ModuleTimeManager(this);
+	shaders = new ModuleShadersManager(this);
 	resources = new ModuleResourcesManager(this);
+	
 
 
 	// The order of calls is very important!
@@ -59,7 +62,7 @@ Application::Application()
 	list_modules.push_back(input);
 	//list_modules.push_back(audio);
 	list_modules.push_back(importer);
-
+	list_modules.push_back(shaders);
 	
 	
 	// Scenes

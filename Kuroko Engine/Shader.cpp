@@ -12,32 +12,6 @@ Shader::Shader(ShaderType type) : type(type)
 {
 	source = new char[2048];
 
-	switch (type)
-	{
-	case VERTEX:
-	{
-		strcpy_s(source, 2048, vertex_default);
-		CreateVertexShader(source);
-		if (compile_success)
-		{
-			//UpdateShader();
-		}
-	}
-	break;
-	case FRAGMENT:
-	{
-		strcpy_s(source, 2048, fragment_default);
-		CreateFragmentShader(source);
-		if (compile_success)
-		{
-			//UpdateShader();
-		}
-	}
-	break;
-	default:
-		break;
-	}
-
 }
 
 Shader::~Shader()
@@ -46,6 +20,10 @@ Shader::~Shader()
 
 void Shader::CreateVertexShader(const char* ShaderSource)
 {
+	//SET SOURCE WITH CODE PROVIDED
+	SetSourceCode(ShaderSource);
+
+	//CREATE SHADER
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &ShaderSource, NULL);
@@ -68,6 +46,10 @@ void Shader::CreateVertexShader(const char* ShaderSource)
 
 void Shader::CreateFragmentShader(const char* ShaderSource)
 {
+	//SET SOURCE WITH CODE PROVIDED
+	SetSourceCode(ShaderSource);
+
+	//CREATE SHADER
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &ShaderSource, NULL);
@@ -86,5 +68,70 @@ void Shader::CreateFragmentShader(const char* ShaderSource)
 	}
 	compile_success = true;
 	id = fragmentShader;
+}
+
+void Shader::SetSourceCode(const char * code)
+{
+	strcpy_s(source, 2048, code);
+}
+
+ShaderProgram::ShaderProgram(Shader* vertex, Shader* fragment) : vs(vertex), fs(fragment)
+{
+	CreateProgram();
+}
+
+ShaderProgram::~ShaderProgram()
+{
+}
+
+void ShaderProgram::CreateProgram()
+{
+	// Get a program object.
+	GLuint program = glCreateProgram();
+
+	// Attach our shaders to our program
+	glAttachShader(program, vs->getId());
+	glAttachShader(program, fs->getId());
+
+	// Link our program
+	glLinkProgram(program);
+
+	GLint isLinked = 0;
+	GLchar infoLog[512];
+	glGetProgramiv(program, GL_LINK_STATUS, (int *)&isLinked);
+	if (isLinked == GL_FALSE)
+	{
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		app_log->AddLog("Program linking error: %s", infoLog);
+
+		// We don't need the program anymore.
+		glDeleteProgram(program);
+		// Don't leak shaders either.
+		glDeleteShader(vs->getId());
+		glDeleteShader(fs->getId());
+
+		link_success = false;
+		id = 0;
+	}
+	link_success = true;
+	id = program;
+	// Always detach shaders after a successful link.
+	glDetachShader(program, vs->getId());
+	glDetachShader(program, fs->getId());
+}
+
+void ShaderProgram::UseProgram()
+{
+	glUseProgram(id);
+}
+
+void ShaderProgram::SetVertexShader(Shader* _vs)
+{
+	vs = _vs;
+}
+
+void ShaderProgram::SetFragmentShader(Shader* _fs)
+{
+	fs = _fs;
 }
 
