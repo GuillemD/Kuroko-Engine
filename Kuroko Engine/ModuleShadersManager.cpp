@@ -47,18 +47,20 @@ void ModuleShadersManager::SetDefaultShaders()
 
 		"#version 330 core\n\
 	layout(location = 0) in vec3 position;\n\
-	layout(location = 1) in vec3 color;\n\
-	layout(location = 2) in vec2 texCoord;\n\\n\
-	out vec3 ourColor;\n\
-	out vec2 TexCoord;\n\
-	uniform mat4 model;\n\
-	uniform mat4 view;\n\
-	uniform mat4 projection;\n\
+	layout(location = 1) in vec4 color;\n\
+	layout(location = 2) in vec3 normal;\n\
+	layout(location = 3) in vec3 texCoord;\n\\n\
+	out vec4 ourColor;\n\
+	out vec3 Normal;\n\
+	out vec3 TexCoord;\n\
+	uniform mat4 model_matrix;\n\
+	uniform mat4 view_matrix;\n\
+	uniform mat4 projection_matrix;\n\
 	void main()\n\
 	{\n\\n\
-		gl_Position = projection * view * model * vec4(position, 1.0f);\n\
+		gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f);\n\
 		ourColor = color;\n\
-		TexCoord = texCoord;\n\
+		TexCoord = texCoord.xy;\n\
 	}";
 
 	default_vertex_shader = new Shader(VERTEX);
@@ -71,7 +73,8 @@ void ModuleShadersManager::SetDefaultShaders()
 	//DEFAULT FRAGMENT SHADER CODE
 	char fragment_default[512] =
 		"#version 330 core\n\
-	in vec3 ourColor;\n\
+	in vec4 ourColor;\n\
+	in vec3 Normal;\n\
 	in vec2 TexCoord;\n\\n\
 	out vec4 color;\n\
 	uniform sampler2D ourTexture;\n\

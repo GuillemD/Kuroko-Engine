@@ -14,6 +14,8 @@
 #include "Applog.h"
 #include "ModuleResourcesManager.h"
 #include "ResourceMesh.h"
+#include "ModuleShadersManager.h"
+#include "Shader.h"
 
 ComponentMesh::ComponentMesh(JSON_Object * deff, GameObject* parent): Component(parent, MESH) {
 	std::string path;
@@ -62,15 +64,27 @@ void ComponentMesh::Draw() const
 			ComponentTransform* transform = nullptr;
 			float4x4 view_mat = float4x4::identity;
 
-
+			App->shaders->GetDefaultProgram()->UseProgram();
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
+
 				GLfloat matrix[16];
 				glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 				view_mat.Set((float*)matrix);
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
 				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+				/*
+				//Model
+				GLint modelLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "model_matrix");
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
+				//View
+				GLint viewLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "view_matrix");
+				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, );
+				//Projection
+				GLint projectionLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "projection_matrix");
+				glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, App->camera->current_camera->getFrustum()->ProjectionMatrix().v);
+				*/
 			}
 
 

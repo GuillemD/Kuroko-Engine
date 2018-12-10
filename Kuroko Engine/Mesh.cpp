@@ -9,6 +9,7 @@
 #include "ModuleResourcesManager.h"
 #include "ResourceTexture.h"
 
+
 #include "Assimp\include\scene.h"
 
 Mesh::Mesh(const aiMesh& imported_mesh, const aiScene& scene,const char* file_name) : id(App->scene->last_mesh_id++)
@@ -117,11 +118,27 @@ void Mesh::LoadDataToVRAM()
 	glBufferSubData(GL_ARRAY_BUFFER, vSize, vSize, normals);               // copy norms after verts
 	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize, vSize, colors);          // copy cols after norms
 	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize + vSize, tSize, tex_coords); // copy texs after cols
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	
 	// copy index data to VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float3) * num_tris, tris, GL_STATIC_DRAW);
+
+	//Enable Attrib Pointers
+	//POS
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	//COLOR
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	//NORMAL
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	//TEXCOORD
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
+
+	//Unbind Buffers
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -129,6 +146,7 @@ void Mesh::LoadDataToVRAM()
 
 void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 {
+	
 	//Texture* diffuse_tex = mat ? mat->getTexture(DIFFUSE) : nullptr;
 	Texture* diffuse_tex = nullptr;
 	if(mat){
