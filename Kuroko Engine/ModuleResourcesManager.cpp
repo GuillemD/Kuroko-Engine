@@ -9,6 +9,7 @@
 #include "ResourceShader.h"
 #include "Applog.h"
 #include "Mesh.h"
+#include "ModuleShadersManager.h"
 
 // Temporal debug purposes
 #include "ModuleInput.h"
@@ -272,7 +273,7 @@ resource_deff ModuleResourcesManager::ManageAsset(std::string path, std::string 
 			App->importer->ImportScene(full_asset_path.c_str(), uuid_str);
 			break;
 		case R_SHADER:
-			//App->shaders->ImportShader();
+			App->shaders->ImportShader(full_asset_path.c_str(), uuid_str);
 			break;
 	}
 	// Meta generated and file imported, create resource in code
@@ -459,15 +460,17 @@ const char * ModuleResourcesManager::assetExtension2type(const char * _extension
 	std::string extension = _extension;
 
 	if (extension == ".FBX" || extension == ".fbx" || extension == ".dae" || extension == ".blend" || extension == ".3ds" || extension == ".obj"
-		|| extension == ".gltf" || extension == ".glb" || extension == ".dxf" || extension == ".x") 
+		|| extension == ".gltf" || extension == ".glb" || extension == ".dxf" || extension == ".x")
 		ret = "scene";
 	else if (extension == ".bmp" || extension == ".dds" || extension == ".jpg" || extension == ".pcx" || extension == ".png"
-		|| extension == ".raw" || extension == ".tga" || extension == ".tiff") 
+		|| extension == ".raw" || extension == ".tga" || extension == ".tiff")
 		ret = "texture";
 	else if (extension == ".json")
 		ret = "json";
 	else if (extension == ".meta")
 		ret = "meta";
+	else if (extension == ".vert" || extension == ".frag")
+		ret = "shader";
 
 	return ret;
 }
@@ -480,6 +483,8 @@ ResourceType ModuleResourcesManager::type2enumType(const char * type) {
 		ret = R_SCENE;
 	if (str_type == "texture")
 		ret = R_TEXTURE;
+	if (str_type == "shader")
+		ret = R_SHADER;
 
 	return ret;
 }
@@ -495,6 +500,9 @@ const char * ModuleResourcesManager::enumType2binaryExtension(ResourceType type)
 			break;
 		case R_SCENE:
 			ret = ".json";
+			break;
+		case R_SHADER:
+			ret = ".shad";
 			break;
 	}
 
@@ -512,6 +520,9 @@ lib_dir ModuleResourcesManager::enumType2libDir(ResourceType type) {
 		break;
 	case R_SCENE:
 		ret = LIBRARY_PREFABS;
+		break;
+	case R_SHADER:
+		ret = LIBRARY_SHADERS;
 		break;
 	}
 	return ret;

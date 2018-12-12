@@ -95,3 +95,15 @@ void ModuleShadersManager::SetDefaultProgram()
 
 	programs.push_back(default_shader_program);
 }
+
+bool ModuleShadersManager::ImportShader(const char * file_original_name, std::string file_binary_name)
+{
+	bool ret = true;
+
+	return ret;
+}
+
+Shader * ModuleShadersManager::LoadShaderFromLibrary(const char * file)
+{
+	return nullptr;
+}

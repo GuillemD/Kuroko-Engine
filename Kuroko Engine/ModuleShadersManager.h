@@ -27,6 +27,9 @@ public:
 
 	void SetDefaultShaders();
 	void SetDefaultProgram();
+
+	bool ImportShader(const char * file_original_name, std::string file_binary_name);
+	Shader* LoadShaderFromLibrary(const char * file);
 private:
 	
 	std::vector<Shader*> shaders;
