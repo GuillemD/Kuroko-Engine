@@ -3,7 +3,6 @@
 #include "Application.h"
 #include "ModuleImporter.h"
 #include "Applog.h"
-#include "Material.h"
 
 
 ResourceTexture::ResourceTexture(resource_deff deff): Resource(deff) {

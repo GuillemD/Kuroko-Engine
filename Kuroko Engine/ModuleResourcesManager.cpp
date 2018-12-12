@@ -6,6 +6,7 @@
 #include "ResourceTexture.h"
 #include "ResourceMesh.h"
 #include "ResourceScene.h"
+#include "ResourceShader.h"
 #include "Applog.h"
 #include "Mesh.h"
 
@@ -76,6 +77,7 @@ Resource * ModuleResourcesManager::newResource(resource_deff deff) {
 	case R_TEXTURE: ret = (Resource*) new ResourceTexture(deff); break;
 	case R_MESH: ret = (Resource*) new ResourceMesh(deff); break;     
 	case R_SCENE: ret = (Resource*) new ResourceScene(deff); break; 
+	case R_SHADER: ret = (Resource*) new ResourceShader(deff); break;
 	} 
 
 	if (ret)
@@ -268,6 +270,9 @@ resource_deff ModuleResourcesManager::ManageAsset(std::string path, std::string 
 			break;
 		case R_SCENE:
 			App->importer->ImportScene(full_asset_path.c_str(), uuid_str);
+			break;
+		case R_SHADER:
+			//App->shaders->ImportShader();
 			break;
 	}
 	// Meta generated and file imported, create resource in code

@@ -125,7 +125,7 @@ void Mesh::LoadDataToVRAM()
 
 	//Enable Attrib Pointers
 	//POS
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)0);
+	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	//COLOR
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
@@ -135,8 +135,8 @@ void Mesh::LoadDataToVRAM()
 	glEnableVertexAttribArray(2);
 	//TEXCOORD
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(3);
-
+	glEnableVertexAttribArray(3);*/
+	
 	//Unbind Buffers
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

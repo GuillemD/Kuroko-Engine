@@ -74,9 +74,9 @@ void ComponentMesh::Draw() const
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
 				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
-				/*
+				
 				//Model
-				GLint modelLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "model_matrix");
+				/*GLint modelLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "model_matrix");
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
 				//View
 				GLint viewLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "view_matrix");

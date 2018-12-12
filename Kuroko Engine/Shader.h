@@ -18,11 +18,12 @@ public:
 
 	void SetSourceCode(const char* code);
 
+	bool compile_success = false;
+
 private:
 	
 	ShaderType type = UNKNOWN;
 	uint id = 0;
-	bool compile_success = false;
 	char* source = nullptr;
 
 	

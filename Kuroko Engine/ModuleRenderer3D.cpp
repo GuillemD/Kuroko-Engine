@@ -59,9 +59,9 @@ bool ModuleRenderer3D::Init(const JSON_Object* config)
 			ret = false;
 		}
 
-		//Initialize Modelview Matrix
+		/*//Initialize Modelview Matrix
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glLoadIdentity();*/
 
 		//Check for error
 		error = glGetError();
@@ -69,10 +69,7 @@ bool ModuleRenderer3D::Init(const JSON_Object* config)
 		{
 			ret = false;
 		}
-		
-		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		glClearDepth(1.0f);
-		
+
 		//Initialize clear color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
@@ -198,6 +195,7 @@ void ModuleRenderer3D::OnResize(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixf((GLfloat*)App->camera->editor_camera->getFrustum()->ProjectionMatrix().v);
+	
 }
 
 

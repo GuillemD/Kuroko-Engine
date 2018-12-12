@@ -62,7 +62,7 @@ Application::Application()
 	list_modules.push_back(input);
 	//list_modules.push_back(audio);
 	list_modules.push_back(importer);
-	list_modules.push_back(shaders);
+	
 	
 	
 	// Scenes
@@ -72,6 +72,7 @@ Application::Application()
 	// Renderer last!
 	list_modules.push_back(resources);
 	list_modules.push_back(gui);
+	list_modules.push_back(shaders);
 	list_modules.push_back(renderer3D);
 
 	// HARDCODED
