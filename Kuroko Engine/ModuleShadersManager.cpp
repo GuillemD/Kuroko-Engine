@@ -7,6 +7,7 @@
 #include "Applog.h"
 #include "ModuleImporter.h"
 #include "ModuleResourcesManager.h"
+#include "Resource.h"
 
 
 ModuleShadersManager::ModuleShadersManager(Application * app, bool start_enabled) : Module(app, start_enabled)
@@ -35,7 +36,28 @@ bool ModuleShadersManager::Start()
 
 bool ModuleShadersManager::CleanUp()
 {
-	
+	/*for (auto it = shaders.begin(); it != shaders.end(); it++) {
+		
+		if ((*it) != NULL && (*it) != nullptr)
+		{
+			delete (*it);
+			(*it) = nullptr;
+			it = shaders.erase(it);
+		}
+		
+	}
+
+
+	for (auto it = programs.begin(); it != programs.end(); it++) {
+
+		if ((*it) != NULL && (*it) != nullptr)
+		{
+			delete (*it);
+			(*it) = nullptr;
+			it = programs.erase(it);
+		}
+
+	}*/
 	return true;
 }
 
@@ -96,9 +118,21 @@ void ModuleShadersManager::SetDefaultProgram()
 	programs.push_back(default_shader_program);
 }
 
-bool ModuleShadersManager::ImportShader(const char * file_original_name, std::string file_binary_name)
+bool ModuleShadersManager::ImportShader(const char * file_original_name, std::string file_binary_name, std::string extension)
 {
 	bool ret = true;
+
+	if (extension == ".vert")
+	{
+		Shader* shader = new Shader(VERTEX);
+	}
+	else if (extension == ".frag")
+	{
+		Shader* shader = new Shader(FRAGMENT);
+	}
+	//set code + compile it
+	//save to library
+	//delete shader
 
 	return ret;
 }
