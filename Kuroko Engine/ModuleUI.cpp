@@ -1827,10 +1827,10 @@ void ModuleUI::DrawScriptEditor() {
 			if (ImGui::MenuItem("Save"))
 			{
 				auto textToSave = shader_editor.GetText();
-				/// save text....
+				App->fs.ReplaceFileText(shader_path.c_str(), textToSave.c_str());
 			}
 			if (ImGui::MenuItem("Quit", "Alt-F4")) {
-				
+				//break;
 			}
 				
 			ImGui::EndMenu();
@@ -1880,7 +1880,7 @@ void ModuleUI::DrawScriptEditor() {
 	ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, shader_editor.GetTotalLines(),
 		shader_editor.IsOverwrite() ? "Ovr" : "Ins",
 		shader_editor.CanUndo() ? "*" : " ",
-		shader_editor.GetLanguageDefinition().mName.c_str(), shader_path);
+		shader_editor.GetLanguageDefinition().mName.c_str(), shader_path.c_str());
 
 	shader_editor.Render("Shader Editor");
 	ImGui::PopFont();
@@ -1976,7 +1976,7 @@ void ModuleUI::StartShaderEditor() {
 	markers.insert(std::make_pair<int, std::string>(41, "Another example error"));
 	shader_editor.SetErrorMarkers(markers);
 
-	shader_path = "";
+	shader_path = "Assets/Shaders/DefaultFragmentShader.frag";
 	
 	std::ifstream t(shader_path.c_str());
 	if (t.good())
