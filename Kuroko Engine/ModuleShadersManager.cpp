@@ -64,6 +64,7 @@ bool ModuleShadersManager::CleanUp()
 
 void ModuleShadersManager::SetDefaultShaders()
 {
+	/*
 	//DEFAULT VERTEX SHADER CODE
 	char vertex_default[512] =
 
@@ -83,7 +84,16 @@ void ModuleShadersManager::SetDefaultShaders()
 		gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f);\n\
 		ourColor = color;\n\
 		TexCoord = texCoord.xy;\n\
-	}";
+	}";*/
+
+	//TEST
+	const char* vertex_default = 
+	"#version 330 core\n"
+		"layout (location = 0) in vec3 aPos;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"}\0";
 
 	default_vertex_shader = new Shader(VERTEX);
 	default_vertex_shader->CreateVertexShader(vertex_default);
@@ -91,7 +101,7 @@ void ModuleShadersManager::SetDefaultShaders()
 		shaders.push_back(default_vertex_shader);
 
 
-
+	/*
 	//DEFAULT FRAGMENT SHADER CODE
 	char fragment_default[512] =
 		"#version 330 core\n\
@@ -103,7 +113,15 @@ void ModuleShadersManager::SetDefaultShaders()
 	void main()\n\
 	{\n\\n\
 		color = texture(ourTexture, TexCoord);\n\
-	}";
+	}";*/
+	//TEST
+	const char* fragment_default =
+		"#version 330 core\n"
+		"out vec4 FragColor;\n"
+		"void main()\n"
+		"{\n"
+		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"}\n\0";
 
 	default_fragment_shader = new Shader(FRAGMENT);
 	default_fragment_shader->CreateVertexShader(fragment_default);
