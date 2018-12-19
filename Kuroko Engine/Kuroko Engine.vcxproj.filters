@@ -419,6 +419,8 @@
     </ClInclude>
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\Resources</Filter>
+    <ClInclude Include="ImGui\TextEditor.h">
+      <Filter>Sources\ImGui\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -658,6 +660,8 @@
     </ClCompile>
     <ClCompile Include="ResourceShader.cpp">
       <Filter>Sources\Resources</Filter>
+    <ClCompile Include="ImGui\TextEditor.cpp">
+      <Filter>Sources\ImGui\cpps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

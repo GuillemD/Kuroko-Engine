@@ -198,6 +198,18 @@ bool FileSystem::removePath(std::string& str) {
 	return true;
 }
 
+void FileSystem::ReplaceFileText(const char* path, const char* newtext)
+{
+	std::ofstream file(path);
+
+	if (!file.is_open()) {
+		return;
+	}
+
+	file << newtext;
+	file.close();
+}
+
 void FileSystem::getFileNameFromPath(std::string & str) {
 	removeExtension(str);
 	removePath(str);

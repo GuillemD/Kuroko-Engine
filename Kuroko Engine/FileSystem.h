@@ -54,7 +54,7 @@ public:
 	std::string getPathFromLibDir(lib_dir r_type);
 	bool removeExtension(std::string& str);
 	bool removePath(std::string& str);
-
+	void ReplaceFileText(const char* path, const char* newtext);
 
 
 };

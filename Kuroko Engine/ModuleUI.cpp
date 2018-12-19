@@ -17,7 +17,6 @@
 #include "ImGui/imgui_internal.h"
 #include "ImGui/imgui.h"
 
-
 #include "GameObject.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"
@@ -41,6 +40,7 @@
 #include <gl/GLU.h>
 
 #include <experimental/filesystem>
+#include <fstream>
 
 #pragma comment( lib, "glew-2.1.0/lib/glew32.lib")
 #pragma comment( lib, "glew-2.1.0/lib/glew32s.lib")
@@ -102,10 +102,14 @@ bool ModuleUI::Start()
 
 	ui_fonts[TITLES]				= io->Fonts->AddFontFromFileTTF("Fonts/title.ttf", 16.0f);
 	ui_fonts[REGULAR]				= io->Fonts->AddFontFromFileTTF("Fonts/regular.ttf", 18.0f);
+	ui_fonts[IMGUI_DEFAULT] = io->Fonts->AddFontDefault();
 	//ui_fonts[REGULAR_BOLD]		= io->Fonts->AddFontFromFileTTF("Fonts/regular_bold.ttf", 18.0f);
 	//ui_fonts[REGULAR_ITALIC]		= io->Fonts->AddFontFromFileTTF("Fonts/regular_italic.ttf", 18.0f);
 	//ui_fonts[REGULAR_BOLDITALIC]	= io->Fonts->AddFontFromFileTTF("Fonts/regular_bold_italic.ttf", 18.0f);
 	
+
+	StartShaderEditor();
+
 	io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io->IniFilename = "Settings\\imgui.ini";
 	docking_background = true;
@@ -133,11 +137,11 @@ update_status ModuleUI::Update(float dt) {
 	disable_keyboard_control = false;
 
 
-	if (open_tabs[CONFIGURATION]) 
+	if (open_tabs[CONFIGURATION])
 	{
 		ImGui::Begin("Configuration", &open_tabs[CONFIGURATION]);
 
-		if (ImGui::CollapsingHeader("Graphics")) 
+		if (ImGui::CollapsingHeader("Graphics"))
 			DrawGraphicsLeaf();
 		if (ImGui::CollapsingHeader("Window"))
 			DrawWindowConfigLeaf();
@@ -169,9 +173,9 @@ update_status ModuleUI::Update(float dt) {
 
 	if (open_tabs[ABOUT])
 		DrawAboutLeaf();
-	
+
 	if (open_tabs[LOG])
-		app_log->Draw("App log",&open_tabs[LOG]);
+		app_log->Draw("App log", &open_tabs[LOG]);
 
 	if (open_tabs[TIME_CONTROL])
 		DrawTimeControlWindow();
@@ -190,6 +194,10 @@ update_status ModuleUI::Update(float dt) {
 
 	if (open_tabs[RESOURCES_TAB]) {
 		DrawResourcesWindow();
+	}
+
+	if (open_tabs[SHADER_EDITOR]){
+		DrawScriptEditor();
 	}
 /*
 	if (open_tabs[AUDIO])
@@ -258,6 +266,7 @@ update_status ModuleUI::Update(float dt) {
 			ImGui::MenuItem("Camera Menu", NULL, &open_tabs[CAMERA_MENU]);
 			ImGui::MenuItem("Asset Window", NULL, &open_tabs[ASSET_WINDOW]);
 			ImGui::MenuItem("Resources Window", NULL, &open_tabs[RESOURCES_TAB]);
+			ImGui::MenuItem("Shader Editor", NULL, &open_tabs[SHADER_EDITOR]);
 			//ImGui::MenuItem("Audio", NULL, &open_tabs[AUDIO]);
 			ImGui::EndMenu();
 		}
@@ -1803,6 +1812,84 @@ void ModuleUI::DrawQuadtreeConfigWindow() {
 	ImGui::End();
 }
 
+void ModuleUI::DrawScriptEditor() {
+
+	disable_keyboard_control = true;
+	ImGui::PushFont(ui_fonts[IMGUI_DEFAULT]);
+
+	auto cpos = shader_editor.GetCursorPosition();
+	ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+	ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Save"))
+			{
+				auto textToSave = shader_editor.GetText();
+				App->fs.ReplaceFileText(shader_path.c_str(), textToSave.c_str());
+			}
+			if (ImGui::MenuItem("Quit", "Alt-F4")) {
+				//break;
+			}
+				
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			bool ro = shader_editor.IsReadOnly();
+			if (ImGui::MenuItem("Read-only mode", nullptr, &ro))
+				shader_editor.SetReadOnly(ro);
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Undo", "ALT-Backspace", nullptr, !ro && shader_editor.CanUndo()))
+				shader_editor.Undo();
+			if (ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && shader_editor.CanRedo()))
+				shader_editor.Redo();
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Copy", "Ctrl-C", nullptr, shader_editor.HasSelection()))
+				shader_editor.Copy();
+			if (ImGui::MenuItem("Cut", "Ctrl-X", nullptr, !ro && shader_editor.HasSelection()))
+				shader_editor.Cut();
+			if (ImGui::MenuItem("Delete", "Del", nullptr, !ro && shader_editor.HasSelection()))
+				shader_editor.Delete();
+			if (ImGui::MenuItem("Paste", "Ctrl-V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
+				shader_editor.Paste();
+
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Select all", nullptr, nullptr))
+				shader_editor.SetSelection(TextEditor::Coordinates(), TextEditor::Coordinates(shader_editor.GetTotalLines(), 0));
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Dark palette"))
+				shader_editor.SetPalette(TextEditor::GetDarkPalette());
+			if (ImGui::MenuItem("Light palette"))
+				shader_editor.SetPalette(TextEditor::GetLightPalette());
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
+
+	ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, shader_editor.GetTotalLines(),
+		shader_editor.IsOverwrite() ? "Ovr" : "Ins",
+		shader_editor.CanUndo() ? "*" : " ",
+		shader_editor.GetLanguageDefinition().mName.c_str(), shader_path.c_str());
+
+	shader_editor.Render("Shader Editor");
+	ImGui::PopFont();
+	ImGui::End();
+
+
+
+
+}
 
 void ModuleUI::DrawGuizmo()
 {
@@ -1877,6 +1964,25 @@ void ModuleUI::DrawGuizmo()
 			trans->CalculateMatrix();
 			transform->GlobalToLocal();
 		}
+	}
+}
+
+void ModuleUI::StartShaderEditor() {
+	shader_editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
+
+
+	TextEditor::ErrorMarkers markers;
+	markers.insert(std::make_pair<int, std::string>(20, "Example error here:\nInclude file not found: \"TextEditor.h\""));
+	markers.insert(std::make_pair<int, std::string>(41, "Another example error"));
+	shader_editor.SetErrorMarkers(markers);
+
+	shader_path = "Assets/Shaders/DefaultFragmentShader.frag";
+	
+	std::ifstream t(shader_path.c_str());
+	if (t.good())
+	{
+		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+		shader_editor.SetText(str);
 	}
 }
 

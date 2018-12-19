@@ -7,7 +7,7 @@
 #include "ComponentCamera.h"
 #include "FileSystem.h"
 #include <array>
-
+#include "ImGui/TextEditor.h"
 struct ImGuiIO;
 class GameObject;
 class Component;
@@ -16,13 +16,13 @@ class Material;
 class Camera;
 
 enum GUI_Tabs { HIERARCHY, OBJ_INSPECTOR, PRIMITIVE, ABOUT, LOG, TIME_CONTROL, CONFIGURATION,
-				QUADTREE_CONFIG, CAMERA_MENU, VIEWPORT_MENU /*AUDIO,*/, ASSET_WINDOW, RESOURCES_TAB, LAST_UI_TAB };  
+				QUADTREE_CONFIG, CAMERA_MENU, VIEWPORT_MENU /*AUDIO,*/, ASSET_WINDOW, RESOURCES_TAB,SHADER_EDITOR, LAST_UI_TAB };  
 				// LAST is an utility value to store the max num of tabs.
 
 enum UI_textures { NO_TEXTURE, PLAY, PAUSE, STOP, ADVANCE, GUIZMO_TRANSLATE, GUIZMO_ROTATE, GUIZMO_SCALE, GUIZMO_LOCAL, GUIZMO_GLOBAL, 
 					GUIZMO_SELECT, FOLDER_ICON, OBJECT_ICON, SCENE_ICON, RETURN_ICON, LAST_UI_TEX};
 
-enum UI_Fonts {REGULAR, REGULAR_BOLD, REGULAR_ITALIC, REGULAR_BOLDITALIC, TITLES, LAST_UI_FONT};
+enum UI_Fonts {REGULAR, REGULAR_BOLD, REGULAR_ITALIC, REGULAR_BOLDITALIC, TITLES, IMGUI_DEFAULT, LAST_UI_FONT};
 
 class ModuleUI :
 	public Module {
@@ -57,10 +57,10 @@ public:
 	void DrawAssetsWindow();
 	void DrawAssetInspector();
 	void DrawResourcesWindow(); // A list where you can see all the resources
-
-
+	void DrawScriptEditor();
 	void DrawGuizmo();
 
+	void StartShaderEditor();
 
 	void InvisibleDockingBegin();
 	void InvisibleDockingEnd();
@@ -85,6 +85,9 @@ private:
 
 	std::string asset_window_path = ASSETS_FOLDER;
 	std::string selected_asset;
+
+	TextEditor shader_editor;
+	std::string shader_path;
 };
 #endif
 
