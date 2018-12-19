@@ -221,12 +221,40 @@ void ComponentMesh::SetVertexShader(uint shaderuid)
 {
 	if (shaderuid != 0)
 	{
-		Shader* s = App->shaders->FindShaderByUniqueId(shaderuid);
+		Shader* shader = App->shaders->FindShaderByUniqueId(shaderuid);
 
-		if (s != nullptr && s->getType == VERTEX) {
-			SetVertexShader(s);
+		if (shader != nullptr && shader->getType() == VERTEX) {
+			SetVertexShader(shader);
 		}
 			
+	}
+}
+
+void ComponentMesh::SetFragmentShader(Shader * f_shader)
+{
+	if (f_shader != nullptr)
+	{
+		//To not get duplicate programs we check if a program using the vertex and fragment already exists, Then if it doesnt exist we create one
+		ShaderProgram* program = App->shaders->FindShaderProgram(my_shader->GetVertexShader(), f_shader);
+		if (program == nullptr)
+		{
+			program = new ShaderProgram(my_shader->GetVertexShader(), f_shader);
+			App->shaders->AddShaderProgram(program);
+		}
+		my_shader = program;
+	}
+}
+
+void ComponentMesh::SetFragmentShader(uint shaderuid)
+{
+	if (shaderuid != 0)
+	{
+		Shader* shader = App->shaders->FindShaderByUniqueId(shaderuid);
+
+		if (shader != nullptr && shader->getType() == FRAGMENT) {
+			SetFragmentShader(shader);
+		}
+
 	}
 }
 

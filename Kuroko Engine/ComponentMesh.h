@@ -35,6 +35,8 @@ public:
 
 	void SetVertexShader(Shader* v_shader);
 	void SetVertexShader(uint shaderuid);
+	void SetFragmentShader(Shader* f_shader);
+	void SetFragmentShader(uint shaderuid);
 
 private:
 
