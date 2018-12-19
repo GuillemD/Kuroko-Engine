@@ -33,6 +33,9 @@ public:
 
 	void Save(JSON_Object* config);
 
+	void SetVertexShader(Shader* v_shader);
+	void SetVertexShader(uint shaderuid);
+
 private:
 
 	Mesh * getMeshFromResource() const;
@@ -40,6 +43,8 @@ private:
 	bool draw_normals = false;
 
 	Material* mat = nullptr;
+
+	ShaderProgram* my_shader;
 
 	uint mesh_resource_uuid = 0;
 	PrimitiveTypes primitive_type = PrimitiveTypes::Primitive_None;

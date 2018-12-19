@@ -649,51 +649,35 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 							ImGui::TreePop();
 						}
 
-						if (ImGui::TreeNode("ambient (feature not avaliable yet)"))
+
+						if (ImGui::TreeNode("Shader"))
 						{
-							//ImGui::Image(material->getTexture(AMBIENT) ? (void*)material->getTexture(AMBIENT)->getGLid() : (void*)ui_textures[NO_TEXTURE]->getGLid(), ImVec2(preview_size, preview_size));
+							if (ImGui::Button("Load(from asset folder)##Dif: Load"))
+							{
+								std::string texture_path = openFileWID();
+								uint new_resource = App->resources->getResourceUuid(texture_path.c_str());
+								if (new_resource != 0) {
+									App->resources->assignResource(new_resource);
+									App->resources->deasignResource(material->getTextureResource(DIFFUSE));
+									material->setTextureResource(DIFFUSE, new_resource);
+								}
+							}
+							if (ImGui::Button("New Shader"))
+							{
 
-							//if (ImGui::Button("Load checkered##Amb: Load checkered"))
-							//	material->setCheckeredTexture(AMBIENT);
-							//ImGui::SameLine();
-							//if (ImGui::Button("Load##Amb: Load"))
-							//{
-							//	std::string texture_path = openFileWID();
-							//	if (Texture* tex = (Texture*)App->importer->Import(texture_path.c_str(), I_TEXTURE))
-							//		c_mesh->getMaterial()->setTexture(AMBIENT, tex);
-							//}
-							ImGui::TreePop();
-						}
+							}
+							if (ImGui::Button("Edit Current Shader"))
+							{
+								shader_path = "Assets/Shaders/SecondFragmentShader.frag";
+								std::ifstream t(shader_path.c_str());
+								if (t.good())
+								{
+									std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+									shader_editor.SetText(str);
+								}
+							}
 
-						if (ImGui::TreeNode("normals (feature not avaliable yet)"))
-						{
-							//ImGui::Image(material->getTexture(NORMALS) ? (void*)material->getTexture(NORMALS)->getGLid() : (void*)ui_textures[NO_TEXTURE]->getGLid(), ImVec2(preview_size, preview_size));
 
-							//if (ImGui::Button("Load checkered##Nor: Load checkered"))
-							//	material->setCheckeredTexture(NORMALS);
-							//ImGui::SameLine();
-							//if (ImGui::Button("Load##Nor: Load"))
-							//{
-							//	std::string texture_path = openFileWID();
-							//	if (Texture* tex = (Texture*)App->importer->Import(texture_path.c_str(), I_TEXTURE))
-							//		c_mesh->getMaterial()->setTexture(NORMALS, tex);
-							//}
-							ImGui::TreePop();
-						}
-
-						if (ImGui::TreeNode("lightmap (feature not avaliable yet)"))
-						{
-							//ImGui::Image(material->getTexture(LIGHTMAP) ? (void*)material->getTexture(LIGHTMAP)->getGLid() : (void*)ui_textures[NO_TEXTURE]->getGLid(), ImVec2(preview_size, preview_size));
-
-							//if (ImGui::Button("Load checkered##Lgm: Load checkered"))
-							//	material->setCheckeredTexture(LIGHTMAP);
-							//ImGui::SameLine();
-							//if (ImGui::Button("Load##Lgm: Load"))
-							//{
-							//	std::string texture_path = openFileWID();
-							//	if (Texture* tex = (Texture*)App->importer->Import(texture_path.c_str(), I_TEXTURE))
-							//		c_mesh->getMaterial()->setTexture(LIGHTMAP, tex);
-							//}
 							ImGui::TreePop();
 						}
 						ImGui::TreePop();

@@ -62,6 +62,48 @@ bool ModuleShadersManager::CleanUp()
 }
 
 
+ShaderProgram * ModuleShadersManager::FindShaderProgram(Shader * vert_shader, Shader * frag_shader)
+{
+	for (int i = 0; i < programs.size(); ++i)
+	{
+		if (programs[i]->GetVertexShader() == vert_shader  && programs[i]->GetFragmentShader() == frag_shader)
+		{
+			return programs[i];
+		}
+	}
+
+
+	return nullptr;
+}
+
+ShaderProgram * ModuleShadersManager::FindShaderProgramByUniqueId(uint shaderuid)
+{
+	for (int i = 0; i < programs.size(); ++i)
+	{
+		if (programs[i]->getId() == shaderuid)
+		{
+			return programs[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Shader * ModuleShadersManager::FindShaderByUniqueId(uint shaderuid)
+{
+	for (int i = 0; i < shaders.size(); ++i)
+	{
+		if (shaders[i]->getId() == shaderuid)
+		{
+			return shaders[i];
+		}
+	}
+
+	return nullptr;
+}
+
+
+
 void ModuleShadersManager::SetDefaultShaders()
 {
 	/*
@@ -158,4 +200,10 @@ bool ModuleShadersManager::ImportShader(const char * file_original_name, std::st
 Shader * ModuleShadersManager::LoadShaderFromLibrary(const char * file)
 {
 	return nullptr;
+}
+
+void ModuleShadersManager::AddShaderProgram(ShaderProgram* program) {
+	
+	programs.push_back(program);
+
 }
