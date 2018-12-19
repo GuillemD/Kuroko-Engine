@@ -2,6 +2,7 @@
 #define _COMPONENT_MESH
 #include "Component.h"
 #include "Mesh.h"
+#include "Shader.h"
 
 class Material;
 
