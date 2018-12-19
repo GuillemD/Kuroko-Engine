@@ -39,6 +39,8 @@ public:
 	void SetFragmentShader(Shader* f_shader);
 	void SetFragmentShader(uint shaderuid);
 
+	ShaderProgram* GetMyShaderProgram() { return my_shader; }
+
 private:
 
 	Mesh * getMeshFromResource() const;

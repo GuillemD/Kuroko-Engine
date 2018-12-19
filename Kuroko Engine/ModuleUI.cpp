@@ -654,27 +654,20 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 						{
 							if (ImGui::Button("Load(from asset folder)##Dif: Load"))
 							{
-								std::string texture_path = openFileWID();
-								uint new_resource = App->resources->getResourceUuid(texture_path.c_str());
-								if (new_resource != 0) {
-									App->resources->assignResource(new_resource);
-									App->resources->deasignResource(material->getTextureResource(DIFFUSE));
-									material->setTextureResource(DIFFUSE, new_resource);
-								}
+								
 							}
 							if (ImGui::Button("New Shader"))
 							{
 
 							}
-							if (ImGui::Button("Edit Current Shader"))
+							if (ImGui::Button("Change shader"))
 							{
-								shader_path = "Assets/Shaders/SecondFragmentShader.frag";
-								std::ifstream t(shader_path.c_str());
-								if (t.good())
-								{
-									std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-									shader_editor.SetText(str);
-								}
+
+							}
+
+							if (ImGui::Button("Edit Vertex Shader"))
+							{								
+								//shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
 							}
 
 
