@@ -70,6 +70,13 @@ Mesh::Mesh(float3* _vertices, Tri* _tris, float3* _normals, float3* _colors, flo
 	LoadDataToVRAM();
 }
 
+Mesh::Mesh(float * vertices, Tri * _tris, uint _num_vertices, uint _num_tris, const float3 & centroid):all_vertex_info(vertices), tris(_tris), num_vertices(_num_vertices), num_tris(_num_tris)
+{
+	calculateCentroidandHalfsize();
+	this->centroid = centroid;
+	LoadDataToVRAM();
+}
+
 
 
 Mesh::Mesh(PrimitiveTypes primitive) : id(App->scene->last_mesh_id++)
@@ -534,7 +541,7 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 	}
 	calculateCentroidandHalfsize();
 
-	all_vertex_info = new float[num_vertices * 12];
+	all_vertex_info = new float[num_vertices * 11];
 	float null[3] = { .0f,.0f,.0f };
 	float tex_null[2] = { .0f,.0f };
 

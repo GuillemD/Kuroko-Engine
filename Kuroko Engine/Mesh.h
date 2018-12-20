@@ -34,6 +34,7 @@ public:
 	Mesh(PrimitiveTypes primitive);
 	// Maybe a "MeshDef" could be created?
 	Mesh(float3* vertices, Tri* tris, float3* normals, float3* colors, float2* tex_coords, uint num_vertices, uint num_tris, const float3& centroid = float3::zero);
+	Mesh(float* vertices, Tri* _tris, uint _num_vertices, uint _num_tris, const float3& centroid = float3::zero);
 	~Mesh();
 
 	void Draw(Material* mat, bool draw_as_selected = false) const;
