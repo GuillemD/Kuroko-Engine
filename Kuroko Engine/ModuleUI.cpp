@@ -27,6 +27,7 @@
 #include "Quadtree.h"
 #include "ResourceTexture.h"
 #include "ResourceScene.h"
+#include "ModuleShadersManager.h"
 
 #include "Random.h"
 #include "VRAM.h"
@@ -650,15 +651,13 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 						}
 
 
-						if (ImGui::TreeNode("Shader"))
+						if (ImGui::TreeNode("Shaders"))
 						{
-							if (ImGui::Button("Load(from asset folder)##Dif: Load"))
-							{
-								
-							}
+							
 							if (ImGui::Button("New Shader"))
 							{
-
+								
+								//App->fs.CreateEmptyFile(,ASSETS_SHADERS , VERTEX_SHADER_EXTENSION);
 							}
 							if (ImGui::Button("Change shader"))
 							{
@@ -666,10 +665,15 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 							}
 
 							if (ImGui::Button("Edit Vertex Shader"))
-							{								
+							{		
+								//Uncomment when shaders arent nullptr
 								//shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
 							}
-
+							if (ImGui::Button("Edit Fragment Shader"))
+							{
+								//Uncomment when shaders arent nullptr
+								//shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+							}
 
 							ImGui::TreePop();
 						}

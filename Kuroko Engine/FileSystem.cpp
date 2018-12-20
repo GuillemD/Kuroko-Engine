@@ -84,6 +84,9 @@ void FileSystem::FormFullPath(std::string & path, const char * file_name, lib_di
 	case ASSETS_SCENES:
 		path = SCENES_FOLDER;
 		break;
+	case ASSETS_SHADERS:
+		path = ASSETS_SHADERS_;
+		break;
 	case NO_LIB:
 		path = "";
 		break;

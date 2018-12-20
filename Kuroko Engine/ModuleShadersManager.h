@@ -37,6 +37,8 @@ public:
 	Shader* LoadShaderFromLibrary(const char * file);
 
 	void AddShaderProgram(ShaderProgram* shader);
+
+	int ShadersSize() { return shaders.size(); }
 private:
 	
 	std::vector<Shader*> shaders;
