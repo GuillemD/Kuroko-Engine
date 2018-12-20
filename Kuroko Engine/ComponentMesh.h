@@ -40,7 +40,7 @@ public:
 	void SetFragmentShader(uint shaderuid);
 
 	ShaderProgram* GetMyShaderProgram() { return my_shader; }
-
+	void SetShaderProgram(ShaderProgram* shader);
 private:
 
 	Mesh * getMeshFromResource() const;
@@ -49,7 +49,7 @@ private:
 
 	Material* mat = nullptr;
 
-	ShaderProgram* my_shader;
+	ShaderProgram* my_shader=nullptr;
 
 	uint mesh_resource_uuid = 0;
 	PrimitiveTypes primitive_type = PrimitiveTypes::Primitive_None;

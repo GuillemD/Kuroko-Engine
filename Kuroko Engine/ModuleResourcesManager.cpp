@@ -272,9 +272,7 @@ resource_deff ModuleResourcesManager::ManageAsset(std::string path, std::string 
 		case R_SCENE:
 			App->importer->ImportScene(full_asset_path.c_str(), uuid_str);
 			break;
-		case R_SHADER:
-			App->shaders->ImportShader(full_asset_path.c_str(), uuid_str, extension);
-			break;
+		
 	}
 	// Meta generated and file imported, create resource in code
 

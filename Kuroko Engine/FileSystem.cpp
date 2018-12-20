@@ -176,6 +176,9 @@ std::string FileSystem::getPathFromLibDir(lib_dir lib_dir) {
 	case ASSETS_SCENES:
 		ret = SCENES_FOLDER;
 		break;
+	case ASSETS_SHADERS:
+		ret = ASSETS_SHADERS_;
+		break;
 	case NO_LIB:
 		ret = "";
 		break;

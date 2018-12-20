@@ -39,6 +39,10 @@ public:
 	void AddShaderProgram(ShaderProgram* shader);
 
 	int ShadersSize() { return shaders.size(); }
+	int TotalPrograms() { return programs.size(); }
+
+	Shader* GetShaderByIndex(int i) { return shaders[i]; }
+	ShaderProgram* GetShaderProgramByIndex(int i) { return programs[i]; }
 private:
 	
 	std::vector<Shader*> shaders;

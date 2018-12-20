@@ -41,8 +41,10 @@
 #include <gl/GLU.h>
 
 #include <experimental/filesystem>
+#include <iostream>
 #include <fstream>
-
+#include <string>
+#include "Applog.h"
 #pragma comment( lib, "glew-2.1.0/lib/glew32.lib")
 #pragma comment( lib, "glew-2.1.0/lib/glew32s.lib")
 
@@ -659,20 +661,37 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 								
 								//App->fs.CreateEmptyFile(,ASSETS_SHADERS , VERTEX_SHADER_EXTENSION);
 							}
-							if (ImGui::Button("Change shader"))
+
+							
+
+							if (ImGui::Button("Load Vertex Shader from Assets"))
 							{
+
+								std::string _shader_path = openFileWID();
+								Shader* newshader = new Shader(VERTEX);
+								const char* nom = "";
+								std::ifstream file;
+								
+								
+
+								newshader->CreateVertexShader(nom);						
+								c_mesh->SetVertexShader(newshader);
+								shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+								
 
 							}
 
 							if (ImGui::Button("Edit Vertex Shader"))
-							{		
-								//Uncomment when shaders arent nullptr
-								//shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+							{									
+								shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+								
+								
 							}
 							if (ImGui::Button("Edit Fragment Shader"))
-							{
-								//Uncomment when shaders arent nullptr
-								//shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+							{								
+								shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetFragmentShader()->GetSourceCode());
+								
+								  
 							}
 
 							ImGui::TreePop();
@@ -1957,7 +1976,7 @@ void ModuleUI::StartShaderEditor() {
 	markers.insert(std::make_pair<int, std::string>(41, "Another example error"));
 	shader_editor.SetErrorMarkers(markers);
 
-	shader_path = "Assets/Shaders/DefaultFragmentShader.frag";
+	shader_path = "";
 	
 	std::ifstream t(shader_path.c_str());
 	if (t.good())

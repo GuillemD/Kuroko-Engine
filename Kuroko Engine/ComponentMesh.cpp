@@ -40,11 +40,13 @@ ComponentMesh::ComponentMesh(JSON_Object * deff, GameObject* parent): Component(
 	uint diffuse_resource = json_object_dotget_number(deff, "material.diffuse_resource_uuid");
 	App->resources->assignResource(diffuse_resource);
 	mat->setTextureResource(DIFFUSE, diffuse_resource);
+	SetShaderProgram(App->shaders->GetShaderProgramByIndex(0));
 }
 
 ComponentMesh::ComponentMesh(GameObject* gameobject, PrimitiveTypes type) : Component(gameobject, MESH) {
 	primitive_type = type;
 	mat = new Material();
+	SetShaderProgram(App->shaders->GetShaderProgramByIndex(0));
 
 }
 
@@ -213,7 +215,9 @@ void ComponentMesh::SetVertexShader(Shader * v_shader)
 			program = new ShaderProgram(v_shader, my_shader->GetFragmentShader());
 			App->shaders->AddShaderProgram(program);
 		}
-		my_shader = program;
+
+		my_shader = program; 
+		my_shader->UseProgram();
 	}
 }
 
@@ -242,6 +246,7 @@ void ComponentMesh::SetFragmentShader(Shader * f_shader)
 			App->shaders->AddShaderProgram(program);
 		}
 		my_shader = program;
+		my_shader->UseProgram();
 	}
 }
 
@@ -256,6 +261,11 @@ void ComponentMesh::SetFragmentShader(uint shaderuid)
 		}
 
 	}
+}
+
+void ComponentMesh::SetShaderProgram(ShaderProgram * shader)
+{
+	my_shader = shader;
 }
 
 Mesh * ComponentMesh::getMeshFromResource() const
