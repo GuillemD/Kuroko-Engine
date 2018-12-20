@@ -1795,7 +1795,7 @@ void ModuleUI::DrawScriptEditor() {
 	ImGui::PushFont(ui_fonts[IMGUI_DEFAULT]);
 
 	auto cpos = shader_editor.GetCursorPosition();
-	ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Text Editor Demo", &open_tabs[SHADER_EDITOR], ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
 	ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginMenuBar())
 	{
@@ -1807,7 +1807,7 @@ void ModuleUI::DrawScriptEditor() {
 				App->fs.ReplaceFileText(shader_path.c_str(), textToSave.c_str());
 			}
 			if (ImGui::MenuItem("Quit", "Alt-F4")) {
-				//break;
+				open_tabs[SHADER_EDITOR] = false;
 			}
 				
 			ImGui::EndMenu();
