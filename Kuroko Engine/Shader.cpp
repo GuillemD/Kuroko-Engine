@@ -40,8 +40,11 @@ void Shader::CreateVertexShader(const char* ShaderSource)
 		id = 0;
 
 	}
-	compile_success = true;
-	id = vertexShader;
+	else {
+		compile_success = true;
+		id = vertexShader;
+	}
+	
 }
 
 void Shader::CreateFragmentShader(const char* ShaderSource)
@@ -66,8 +69,12 @@ void Shader::CreateFragmentShader(const char* ShaderSource)
 		id = 0;
 
 	}
-	compile_success = true;
-	id = fragmentShader;
+	else
+	{
+		compile_success = true;
+		id = fragmentShader;
+	}
+	
 }
 
 void Shader::SetSourceCode(const char * code)
@@ -113,8 +120,12 @@ void ShaderProgram::CreateProgram()
 		link_success = false;
 		id = 0;
 	}
-	link_success = true;
-	id = program;
+	else
+	{
+		link_success = true;
+		id = program;
+	}
+	
 	// Always detach shaders after a successful link.
 	glDetachShader(program, vs->getId());
 	glDetachShader(program, fs->getId());

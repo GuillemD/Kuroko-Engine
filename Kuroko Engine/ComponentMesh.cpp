@@ -68,13 +68,21 @@ void ComponentMesh::Draw() const
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
 
-				GLfloat matrix[16];
+				/**/GLfloat matrix[16];
 				glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 				view_mat.Set((float*)matrix);
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
-				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+				//glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+
+				GLint model_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "model_matrix");
+				glUniformMatrix4fv(model_loc, 1, GL_FALSE, (GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
 				
+				GLint view_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "view_matrix");
+				glUniformMatrix4fv(view_loc, 1, GL_FALSE, (GLfloat*)view_mat.v);
+				GLint projection_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "projection_matrix");
+				glUniformMatrix4fv(projection_loc, 1, GL_FALSE, (GLfloat*)App->camera->current_camera->getFrustum()->ProjectionMatrix().v);
+
 				
 			}
 

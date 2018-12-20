@@ -44,7 +44,7 @@ public:
 	Shader* GetVertexShader() const { return vs; };
 	Shader* GetFragmentShader() const { return fs; };
 
-	uint getId() const { return id; };
+	uint getProgramId() const { return id; };
 
 private:
 	Shader* vs = nullptr;
