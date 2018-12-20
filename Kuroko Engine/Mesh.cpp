@@ -70,6 +70,8 @@ Mesh::Mesh(float3* _vertices, Tri* _tris, float3* _normals, float3* _colors, flo
 	LoadDataToVRAM();
 }
 
+
+
 Mesh::Mesh(PrimitiveTypes primitive) : id(App->scene->last_mesh_id++)
 {
 	switch (primitive)
@@ -114,10 +116,6 @@ void Mesh::LoadDataToVRAM()
 	// copy vertex attribs data to VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
 	glBufferData(GL_ARRAY_BUFFER, vSize + vSize + vSize + tSize, 0, GL_STATIC_DRAW); // reserve space
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, vertices);                  // copy verts at offset 0
-	glBufferSubData(GL_ARRAY_BUFFER, vSize, vSize, normals);               // copy norms after verts
-	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize, vSize, colors);          // copy cols after norms
-	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize + vSize, tSize, tex_coords); // copy texs after cols
 	
 	// copy index data to VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
@@ -125,23 +123,22 @@ void Mesh::LoadDataToVRAM()
 
 	//Enable Attrib Pointers
 	//POS
-	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
-	//COLOR
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
 	//NORMAL
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	//COLOR
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(2);
 	//TEXCOORD
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(3);*/
-	
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
+
 	//Unbind Buffers
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-
 
 
 void Mesh::Draw(Material* mat, bool draw_as_selected)  const
@@ -537,11 +534,46 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 	}
 	calculateCentroidandHalfsize();
 
+	all_vertex_info = new float[num_vertices * 12];
+	float null[3] = { .0f,.0f,.0f };
+	float tex_null[2] = { .0f,.0f };
+
 	for (int i = 0; i < num_vertices; i++)
+	{
 		vertices[i] -= centroid;
+
+		memcpy(all_vertex_info + i * 11, vertices, sizeof(float3));
+
+		if (normals != nullptr)
+		{
+			memcpy(all_vertex_info + i * 11 + 3, normals, sizeof(float3));
+		}
+		else
+		{
+			memcpy(all_vertex_info + i * 11 + 3, null, sizeof(float3));
+		}
+		if (colors != nullptr)
+		{
+			memcpy(all_vertex_info + i * 11 + 6, colors, sizeof(float3));
+		}
+		else
+		{
+			memcpy(all_vertex_info + i * 11 + 6, null, sizeof(float3));
+		}
+		if (tex_coords != nullptr)
+		{
+			memcpy(all_vertex_info + i * 11 + 9, tex_coords, sizeof(float2));
+		}
+		else
+		{
+			memcpy(all_vertex_info + i * 11 + 9, tex_null, sizeof(float2));
+		}
+
+	}
 
 	return true;
 }
+
 
 void Mesh::calculateCentroidandHalfsize()
 {

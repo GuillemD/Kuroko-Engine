@@ -70,35 +70,28 @@ void ModuleShadersManager::SetDefaultShaders()
 
 		"#version 330 core\n\
 	layout(location = 0) in vec3 position;\n\
-	layout(location = 1) in vec4 color;\n\
-	layout(location = 2) in vec3 normal;\n\
+	layout(location = 1) in vec3 normal;\n\
+	layout(location = 2) in vec3 color;\n\
 	layout(location = 3) in vec2 texCoord;\n\\n\
 	out vec4 ourColor;\n\
-	out vec3 Normal;\n\
-	out vec3 TexCoord;\n\
+	out vec2 TexCoord;\n\
 	uniform mat4 model_matrix;\n\
 	uniform mat4 view_matrix;\n\
 	uniform mat4 projection_matrix;\n\
 	void main()\n\
 	{\n\\n\
 		gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0f);\n\
-		ourColor = color;\n\
-		TexCoord = texCoord.xy;\n\
+		ourColor = vec4(color, 1.0f);\n\
+		TexCoord = texCoord;\n\
 	}";
+	
+
 	default_vertex_shader = new Shader(VERTEX);
 	default_vertex_shader->CreateVertexShader(vertex_default);
 	if (default_vertex_shader->getId() != 0)
 		shaders.push_back(default_vertex_shader);
-	//TEST
-	/*const char* vertex_default = 
-	"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-
-	*/
+	
+	
 
 
 	
@@ -106,7 +99,6 @@ void ModuleShadersManager::SetDefaultShaders()
 	char fragment_default[512] =
 		"#version 330 core\n\
 	in vec4 ourColor;\n\
-	in vec3 Normal;\n\
 	in vec2 TexCoord;\n\\n\
 	out vec4 color;\n\
 	uniform sampler2D ourTexture;\n\
@@ -114,21 +106,15 @@ void ModuleShadersManager::SetDefaultShaders()
 	{\n\\n\
 		color = texture(ourTexture, TexCoord);\n\
 	}";
+	
 	default_fragment_shader = new Shader(FRAGMENT);
 	default_fragment_shader->CreateVertexShader(fragment_default);
 	if (default_fragment_shader->getId() != 0)
 		shaders.push_back(default_fragment_shader);
-	/*
-	//TEST
-	const char* fragment_default =
-		"#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
+	
+	
 
-	*/
+	
 }
 
 void ModuleShadersManager::SetDefaultProgram()

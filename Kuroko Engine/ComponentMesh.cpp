@@ -68,7 +68,7 @@ void ComponentMesh::Draw() const
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
 
-				/**/GLfloat matrix[16];
+				GLfloat matrix[16];
 				glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 				view_mat.Set((float*)matrix);
 

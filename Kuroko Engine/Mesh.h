@@ -33,7 +33,7 @@ public:
 	Mesh(const aiMesh& mesh, const aiScene& scene, const char* file_name = "");
 	Mesh(PrimitiveTypes primitive);
 	// Maybe a "MeshDef" could be created?
-	Mesh(float3* vertices, Tri* tris, float3* normals, float3* colors, float2* tex_coords, uint num_vertices, uint num_tris, const float3& centroid = float3::zero); //Used to load own file
+	Mesh(float3* vertices, Tri* tris, float3* normals, float3* colors, float2* tex_coords, uint num_vertices, uint num_tris, const float3& centroid = float3::zero);
 	~Mesh();
 
 	void Draw(Material* mat, bool draw_as_selected = false) const;
@@ -74,6 +74,7 @@ private:
 
 	uint num_vertices = 0;
 	uint num_tris = 0;
+	
 	bool imported_normals = false;
 	bool imported_colors = false;
 	bool imported_tex_coords = false;
@@ -86,5 +87,9 @@ private:
 
 	float3 half_size = float3::zero;
 	float3 centroid = float3::zero;
+
+	float* all_vertex_info = nullptr;
+
+	
 };
 #endif
