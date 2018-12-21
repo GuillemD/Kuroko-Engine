@@ -27,6 +27,9 @@ public:
 	bool CleanUp();
 
 	void updateFOVfromWindow();
+	float* GetProjMatrix()const;
+	float* GetViewMatrix()const;
+
 
 public:
 	Camera* editor_camera				= nullptr;

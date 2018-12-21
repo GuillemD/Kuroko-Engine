@@ -76,12 +76,11 @@ void ComponentMesh::Draw() const
 				//glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
 
 				GLint model_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "model_matrix");
-				glUniformMatrix4fv(model_loc, 1, GL_FALSE, (GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
-				
+				glUniformMatrix4fv(model_loc, 1, GL_FALSE, (GLfloat*)(transform->global->getMatrix().Transposed().ptr()));
 				GLint view_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "view_matrix");
-				glUniformMatrix4fv(view_loc, 1, GL_FALSE, (GLfloat*)view_mat.v);
+				glUniformMatrix4fv(view_loc, 1, GL_FALSE, (GLfloat*)App->camera->GetViewMatrix());
 				GLint projection_loc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getProgramId(), "projection_matrix");
-				glUniformMatrix4fv(projection_loc, 1, GL_FALSE, (GLfloat*)App->camera->current_camera->getFrustum()->ProjectionMatrix().v);
+				glUniformMatrix4fv(projection_loc, 1, GL_FALSE, (GLfloat*)App->camera->GetProjMatrix());
 
 				
 			}
