@@ -83,42 +83,9 @@ Skybox::Skybox(float distance) : distance(distance)
 		normals[0] = vertices[0].Neg().Normalized();	normals[1] = vertices[1].Neg().Normalized();
 		normals[2] = vertices[2].Neg().Normalized();	normals[3] = vertices[3].Neg().Normalized();
 
-		float* all_vertex_info = new float[num_vertices * 11];
-		float null[3] = { .0f,.0f,.0f };
-		float tex_null[2] = { .0f,.0f };
-
-		for (int i = 0; i < num_vertices; i++)
-		{
-			memcpy(all_vertex_info + i * 11, vertices, sizeof(float3));
-
-			if (normals != nullptr)
-			{
-				memcpy(all_vertex_info + i * 11 + 3, normals, sizeof(float3));
-			}
-			else
-			{
-				memcpy(all_vertex_info + i * 11 + 3, null, sizeof(float3));
-			}
-			if (colors != nullptr)
-			{
-				memcpy(all_vertex_info + i * 11 + 6, colors, sizeof(float3));
-			}
-			else
-			{
-				memcpy(all_vertex_info + i * 11 + 6, null, sizeof(float3));
-			}
-			if (tex_coords != nullptr)
-			{
-				memcpy(all_vertex_info + i * 11 + 9, tex_coords, sizeof(float2));
-			}
-			else
-			{
-				memcpy(all_vertex_info + i * 11 + 9, tex_null, sizeof(float2));
-			}
-
-		}
-
-		planes[i] = new Mesh(all_vertex_info, indices, num_vertices, num_tris);
+	
+		planes[i] = new Mesh(vertices, indices, normals,colors, tex_coords, num_vertices, num_tris);
+		
 	}
 }
 

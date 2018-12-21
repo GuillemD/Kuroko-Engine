@@ -63,8 +63,7 @@ void ComponentMesh::Draw() const
 		{
 			ComponentTransform* transform = nullptr;
 			float4x4 view_mat = float4x4::identity;
-
-			App->shaders->GetDefaultProgram()->UseProgram();
+			//uint program_id = 
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
 
