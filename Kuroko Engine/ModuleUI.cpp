@@ -658,7 +658,7 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 							
 							if (ImGui::Button("New Shader"))
 							{
-								
+								c_mesh->GetMyShaderProgram();
 								//App->fs.CreateEmptyFile(,ASSETS_SHADERS , VERTEX_SHADER_EXTENSION);
 							}
 
@@ -667,13 +667,13 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 							if (ImGui::Button("Load Vertex Shader from Assets"))
 							{
 
-								std::string _shader_path = openFileWID();
+								std::string _shader_path = openFileWID();								
 								Shader* newshader = new Shader(VERTEX);
 								const char* nom = "";
-								std::ifstream file;
-								
-								
-
+								std::ifstream in(_shader_path);
+								std::string text((std::istreambuf_iterator<char>(in)),
+									std::istreambuf_iterator<char>());
+								nom = text.c_str();														
 								newshader->CreateVertexShader(nom);						
 								c_mesh->SetVertexShader(newshader);
 								shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());

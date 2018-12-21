@@ -41,6 +41,7 @@ ComponentMesh::ComponentMesh(JSON_Object * deff, GameObject* parent): Component(
 	App->resources->assignResource(diffuse_resource);
 	mat->setTextureResource(DIFFUSE, diffuse_resource);
 	SetShaderProgram(App->shaders->GetShaderProgramByIndex(0));
+	
 }
 
 ComponentMesh::ComponentMesh(GameObject* gameobject, PrimitiveTypes type) : Component(gameobject, MESH) {
