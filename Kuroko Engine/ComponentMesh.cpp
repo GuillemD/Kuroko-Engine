@@ -40,19 +40,23 @@ ComponentMesh::ComponentMesh(JSON_Object * deff, GameObject* parent): Component(
 	uint diffuse_resource = json_object_dotget_number(deff, "material.diffuse_resource_uuid");
 	App->resources->assignResource(diffuse_resource);
 	mat->setTextureResource(DIFFUSE, diffuse_resource);
+	SetShaderProgram(App->shaders->GetShaderProgramByIndex(0));
 }
 
 ComponentMesh::ComponentMesh(GameObject* gameobject, PrimitiveTypes type) : Component(gameobject, MESH) {
 	primitive_type = type;
 	mat = new Material();
+	SetShaderProgram(App->shaders->GetShaderProgramByIndex(0));
 
 }
+
 ComponentMesh::~ComponentMesh() {
 	// Deassign all the components that the element had if it is deleted
 	if(primitive_type == Primitive_None)
 		App->resources->deasignResource(mesh_resource_uuid);
 	delete mat;
 }
+
 void ComponentMesh::Draw() const
 {
 	if (Mesh* mesh_from_resource = getMeshFromResource())
@@ -152,12 +156,14 @@ Mesh* ComponentMesh::getMesh() const {
 	}
 	return ret;
 }
+
 void ComponentMesh::setMeshResourceId(uint _mesh_resource_uuid) {
 
 	mesh_resource_uuid = _mesh_resource_uuid;
 	((ComponentAABB*)getParent()->getComponent(C_AABB))->Reload();
 
 }
+
 PrimitiveTypes ComponentMesh::primitiveString2PrimitiveType(std::string primitive_type_string) {
 
 	PrimitiveTypes ret = Primitive_None; // Just for security
@@ -202,6 +208,70 @@ void ComponentMesh::Save(JSON_Object* config) {
 	json_object_set_string(config, "primitive_type", PrimitiveType2primitiveString(primitive_type).c_str());
 	if(mat)  //If it has a material and a diffuse texture
 		json_object_dotset_number(config, "material.diffuse_resource_uuid", mat->getTextureResource(DIFFUSE));
+}
+
+void ComponentMesh::SetVertexShader(Shader * v_shader)
+{
+	if (v_shader != nullptr) 
+	{
+		//To not get duplicate programs we check if a program using the vertex and fragment already exists, Then if it doesnt exist we create one
+		ShaderProgram* program = App->shaders->FindShaderProgram(v_shader, my_shader->GetFragmentShader()); 		
+		if (program == nullptr)																				
+		{
+			program = new ShaderProgram(v_shader, my_shader->GetFragmentShader());
+			App->shaders->AddShaderProgram(program);
+		}
+
+		my_shader = program; 
+		my_shader->UseProgram();
+	}
+}
+
+void ComponentMesh::SetVertexShader(uint shaderuid)
+{
+	if (shaderuid != 0)
+	{
+		Shader* shader = App->shaders->FindShaderByUniqueId(shaderuid);
+
+		if (shader != nullptr && shader->getType() == VERTEX) {
+			SetVertexShader(shader);
+		}
+			
+	}
+}
+
+void ComponentMesh::SetFragmentShader(Shader * f_shader)
+{
+	if (f_shader != nullptr)
+	{
+		//To not get duplicate programs we check if a program using the vertex and fragment already exists, Then if it doesnt exist we create one
+		ShaderProgram* program = App->shaders->FindShaderProgram(my_shader->GetVertexShader(), f_shader);
+		if (program == nullptr)
+		{
+			program = new ShaderProgram(my_shader->GetVertexShader(), f_shader);
+			App->shaders->AddShaderProgram(program);
+		}
+		my_shader = program;
+		my_shader->UseProgram();
+	}
+}
+
+void ComponentMesh::SetFragmentShader(uint shaderuid)
+{
+	if (shaderuid != 0)
+	{
+		Shader* shader = App->shaders->FindShaderByUniqueId(shaderuid);
+
+		if (shader != nullptr && shader->getType() == FRAGMENT) {
+			SetFragmentShader(shader);
+		}
+
+	}
+}
+
+void ComponentMesh::SetShaderProgram(ShaderProgram * shader)
+{
+	my_shader = shader;
 }
 
 Mesh * ComponentMesh::getMeshFromResource() const

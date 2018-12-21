@@ -37,14 +37,14 @@ bool ModuleShadersManager::Start()
 bool ModuleShadersManager::CleanUp()
 {
 	/*for (auto it = shaders.begin(); it != shaders.end(); it++) {
-		
+
 		if ((*it) != NULL && (*it) != nullptr)
 		{
 			delete (*it);
 			(*it) = nullptr;
 			it = shaders.erase(it);
 		}
-		
+
 	}
 
 
@@ -62,9 +62,54 @@ bool ModuleShadersManager::CleanUp()
 }
 
 
+ShaderProgram * ModuleShadersManager::FindShaderProgram(Shader * vert_shader, Shader * frag_shader)
+{
+	for (int i = 0; i < programs.size(); ++i)
+	{
+		if (programs[i]->GetVertexShader() == vert_shader  && programs[i]->GetFragmentShader() == frag_shader)
+		{
+			return programs[i];
+		}
+	}
+
+
+	return nullptr;
+}
+
+ShaderProgram * ModuleShadersManager::FindShaderProgramByUniqueId(uint shaderuid)
+{
+	for (int i = 0; i < programs.size(); ++i)
+	{
+		if (programs[i]->getId() == shaderuid)
+		{
+			return programs[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Shader * ModuleShadersManager::FindShaderByUniqueId(uint shaderuid)
+{
+	for (int i = 0; i < shaders.size(); ++i)
+	{
+		if (shaders[i]->getId() == shaderuid)
+		{
+			return shaders[i];
+		}
+	}
+
+	return nullptr;
+}
+
+
+
+
+
+
 void ModuleShadersManager::SetDefaultShaders()
 {
-	
+
 	//DEFAULT VERTEX SHADER CODE
 	char vertex_default[512] =
 
@@ -84,17 +129,17 @@ void ModuleShadersManager::SetDefaultShaders()
 		ourColor = vec4(color, 1.0f);\n\
 		TexCoord = texCoord;\n\
 	}";
-	
+
 
 	default_vertex_shader = new Shader(VERTEX);
 	default_vertex_shader->CreateVertexShader(vertex_default);
 	if (default_vertex_shader->getId() != 0)
 		shaders.push_back(default_vertex_shader);
-	
-	
 
 
-	
+
+
+
 	//DEFAULT FRAGMENT SHADER CODE
 	char fragment_default[512] =
 		"#version 330 core\n\
@@ -106,15 +151,15 @@ void ModuleShadersManager::SetDefaultShaders()
 	{\n\\n\
 		color = texture(ourTexture, TexCoord);\n\
 	}";
-	
+
 	default_fragment_shader = new Shader(FRAGMENT);
 	default_fragment_shader->CreateVertexShader(fragment_default);
 	if (default_fragment_shader->getId() != 0)
 		shaders.push_back(default_fragment_shader);
-	
-	
 
-	
+
+
+
 }
 
 void ModuleShadersManager::SetDefaultProgram()
@@ -146,4 +191,10 @@ bool ModuleShadersManager::ImportShader(const char * file_original_name, std::st
 Shader * ModuleShadersManager::LoadShaderFromLibrary(const char * file)
 {
 	return nullptr;
+}
+
+void ModuleShadersManager::AddShaderProgram(ShaderProgram* program) {
+
+	programs.push_back(program);
+
 }

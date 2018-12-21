@@ -25,11 +25,24 @@ public:
 	Shader* GetDefaultFragment() const { return default_fragment_shader; };
 	ShaderProgram* GetDefaultProgram() const { return default_shader_program; };
 
+	ShaderProgram* FindShaderProgram(Shader* vert_shader, Shader* frag_shader);
+	ShaderProgram* FindShaderProgramByUniqueId(uint shaderuid);
+	Shader* FindShaderByUniqueId(uint shaderuid);
+
+
 	void SetDefaultShaders();
 	void SetDefaultProgram();
 
 	bool ImportShader(const char * file_original_name, std::string file_binary_name, std::string extension);
 	Shader* LoadShaderFromLibrary(const char * file);
+
+	void AddShaderProgram(ShaderProgram* shader);
+
+	int ShadersSize() { return shaders.size(); }
+	int TotalPrograms() { return programs.size(); }
+
+	Shader* GetShaderByIndex(int i) { return shaders[i]; }
+	ShaderProgram* GetShaderProgramByIndex(int i) { return programs[i]; }
 private:
 	
 	std::vector<Shader*> shaders;

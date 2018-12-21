@@ -20,6 +20,7 @@ public:
 
 	bool compile_success = false;
 
+	char* GetSourceCode() { return source; }
 private:
 	
 	ShaderType type = UNKNOWN;

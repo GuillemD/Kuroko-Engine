@@ -411,14 +411,17 @@
     <ClInclude Include="MD5.h">
       <Filter>Sources\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Sources\Containers</Filter>
+    <ClInclude Include="ImGui\TextEditor.h">
+      <Filter>Sources\ImGui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="ModuleShadersManager.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ResourceShader.h">
       <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Sources\Containers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -650,14 +653,17 @@
     <ClCompile Include="MD5.cpp">
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Sources\Containers</Filter>
+    <ClCompile Include="ImGui\TextEditor.cpp">
+      <Filter>Sources\ImGui\cpps</Filter>
     </ClCompile>
     <ClCompile Include="ModuleShadersManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ResourceShader.cpp">
       <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Sources\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,7 @@
 #define SETTINGS_FOLDER "Settings\\"
 #define SCENES_FOLDER "Assets\\Scenes\\"
 #define ASSETS_FOLDER "Assets\\"
-
+#define ASSETS_SHADERS_ "Assets\\Shaders\\"
 
 enum lib_dir {
 	LIBRARY_MESHES,
@@ -29,6 +29,7 @@ enum lib_dir {
 	SETTINGS,
 	ASSETS,
 	ASSETS_SCENES,
+	ASSETS_SHADERS,
 	NO_LIB
 };
 
@@ -54,7 +55,7 @@ public:
 	std::string getPathFromLibDir(lib_dir r_type);
 	bool removeExtension(std::string& str);
 	bool removePath(std::string& str);
-
+	void ReplaceFileText(const char* path, const char* newtext);
 
 
 };
