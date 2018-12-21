@@ -218,3 +218,19 @@ void Camera::initFrameBuffer()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 }
+
+float * Camera::GetProjection() const
+{
+	static float4x4 proj;
+	proj = frustum->ProjectionMatrix;
+	proj.Transpose();
+	return proj.ptr();
+}
+
+float * Camera::GetView() const
+{
+	static float4x4 view;
+	view = frustum->ViewMatrix();
+	view.Transpose();
+	return view.ptr();
+}

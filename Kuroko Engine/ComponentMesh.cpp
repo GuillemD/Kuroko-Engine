@@ -63,13 +63,15 @@ void ComponentMesh::Draw() const
 	if (Mesh* mesh_from_resource = getMeshFromResource())
 	{
 		OBB* obb = ((ComponentAABB*)getParent()->getComponent(C_AABB))->getOBB();
+		uint program_id = my_shader->getId();
+		my_shader->UseProgram();
 
 		if (App->camera->current_camera->frustumCull(*obb))
 		{
 			ComponentTransform* transform = nullptr;
 			float4x4 view_mat = float4x4::identity;
 
-			App->shaders->GetDefaultProgram()->UseProgram();
+			
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
 

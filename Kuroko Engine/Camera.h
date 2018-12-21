@@ -62,6 +62,9 @@ public:
 	void updateFrustum();
 	void initFrameBuffer();
 
+	float* GetProjection() const;
+	float* GetView() const;
+
 public:
 
 	float3 X = { 1.0f,0.0f,0.0f };
