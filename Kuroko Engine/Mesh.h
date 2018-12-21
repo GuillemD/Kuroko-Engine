@@ -33,7 +33,7 @@ public:
 	Mesh(const aiMesh& mesh, const aiScene& scene, const char* file_name = "");
 	Mesh(PrimitiveTypes primitive);
 	// Maybe a "MeshDef" could be created?
-	Mesh(float3* vertices, Tri* tris, float3* normals, float3* colors, float2* tex_coords, uint num_vertices, uint num_tris, const float3& centroid = float3::zero); //Used to load own file
+	Mesh(float* _vertices, Tri* tris, uint num_vertices, uint num_tris, const float3& centroid = float3::zero); //Used to load own file
 	~Mesh();
 
 	void Draw(Material* mat, bool draw_as_selected = false) const;
@@ -44,11 +44,9 @@ public:
 	float3 getCentroid() const { return centroid; }
 	uint getId() const { return id; };
 
-	const float3* getVertices()		{ return vertices; }
+	const float* getVertices()		{ return vertex_one_buffer; }
 	const Tri* getTris()			{ return tris; }
-	const float3* getNormals()		{ return normals; }
-	const float3* getColors()		{ return colors; }
-	const float2* getTexCoords()	{ return tex_coords; }
+
 	const char* getName()			{ return mesh_name.c_str(); }         
 	void setName(const char* name)	{ mesh_name = name; }
 	uint getNumVertices() { return num_vertices; }
@@ -57,10 +55,10 @@ public:
 private:
 
 	void LoadDataToVRAM();
-	void BuildCube(float3& size = (float3)float3::one);
+	void BuildCube();
 	void BuildPlane(float sx = 1.0f, float sy = 1.0f);
-	void BuildSphere(float radius = 1.0f, float sectorCount = 12.0f, float stackCount = 24.0f);
-	void BuildCylinder(float radius = 1.0f, float length = 3.0f, int steps = 30);
+	//void BuildSphere(float radius = 1.0f, float sectorCount = 12.0f, float stackCount = 24.0f);
+	//void BuildCylinder(float radius = 1.0f, float length = 3.0f, int steps = 30);
 	bool LoadFromAssimpMesh(const aiMesh& mesh, const aiScene& scene);
 	void ClearData();
 	void calculateCentroidandHalfsize();
@@ -70,21 +68,21 @@ private:
 	const uint id = 0;
 	uint iboId = 0;
 	uint vboId = 0;
+	uint vaoId = 0;
 	std::string mesh_name; //"CUBE", "PLANE", "SHPERE" and "CYLIDER" are primitives, don't use models with this name
 
 	uint num_vertices = 0;
 	uint num_tris = 0;
-	bool imported_normals = false;
-	bool imported_colors = false;
-	bool imported_tex_coords = false;
+	uint num_indices = 0;
 
-	float3* vertices = nullptr;
+	float* vertex_one_buffer = nullptr;
 	Tri* tris = nullptr;
-	float3* normals = nullptr;
-	float3* colors = nullptr;
-	float2* tex_coords = nullptr;
 
 	float3 half_size = float3::zero;
 	float3 centroid = float3::zero;
+
+	bool imported_normals = false;
+	bool imported_colors = false;
+	bool imported_tex_coords = false;
 };
 #endif

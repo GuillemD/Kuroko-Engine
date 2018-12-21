@@ -111,13 +111,13 @@ void ModuleResourcesManager::GeneratePrimitiveResources() {
 	primitive_resources[Primitive_Plane] = plane;
 
 
-	ResourceMesh* sphere = new ResourceMesh(resource_deff());
+	/*ResourceMesh* sphere = new ResourceMesh(resource_deff());
 	sphere->mesh = new Mesh(PrimitiveTypes::Primitive_Sphere);
 	primitive_resources[Primitive_Sphere] = sphere;
 
 	ResourceMesh* cylinder = new ResourceMesh(resource_deff());
 	cylinder->mesh = new Mesh(PrimitiveTypes::Primitive_Cylinder);
-	primitive_resources[Primitive_Cylinder] = cylinder;
+	primitive_resources[Primitive_Cylinder] = cylinder;*/
 }
 
 

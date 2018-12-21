@@ -222,7 +222,7 @@ void Camera::initFrameBuffer()
 float * Camera::GetProjection() const
 {
 	static float4x4 proj;
-	proj = frustum->ProjectionMatrix;
+	proj = frustum->ProjectionMatrix();
 	proj.Transpose();
 	return proj.ptr();
 }

@@ -41,18 +41,18 @@ ModuleScene::~ModuleScene(){}
 // Load assets
 bool ModuleScene::Start()
 {
-	skybox = new Skybox();
+	//skybox = new Skybox();
 	want_save_scene_file = false;
 	want_load_scene_file = false;
 
-	std::array<Texture*, 6> skybox_texs;
+	/*std::array<Texture*, 6> skybox_texs;
 	skybox_texs[LEFT]	= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_left.png");
 	skybox_texs[RIGHT]	= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_right.png");
 	skybox_texs[UP]		= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_up.png");
 	skybox_texs[DOWN]	= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_down.png");
 	skybox_texs[FRONT]	= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_front.png");
 	skybox_texs[BACK]	= (Texture*)App->importer->ImportTexturePointer("Assets/Textures/skybox_default_back.png");
-	skybox->setAllTextures(skybox_texs);
+	skybox->setAllTextures(skybox_texs);*/
 
 	quadtree = new Quadtree(AABB(float3(-50, -10, -50), float3(50, 10, 50)));
 	return true;
@@ -210,7 +210,7 @@ GameObject* ModuleScene::MousePicking(float x, float y, GameObject* ignore)
 
 			for (int i = 0; i < mesh->getNumTris(); i++)
 			{
-				const float3* vertices = mesh->getVertices();
+				const float* vertices = mesh->getVertices();
 				const Tri* tris = mesh->getTris();
 
 				Triangle t((global->getRotation() * (global->getScale().Mul(vertices[tris[i].v1])) + global->getPosition()),

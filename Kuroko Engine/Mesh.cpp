@@ -21,49 +21,14 @@ Mesh::Mesh(const aiMesh& imported_mesh, const aiScene& scene,const char* file_na
 	
 }
 
-Mesh::Mesh(float3* _vertices, Tri* _tris, float3* _normals, float3* _colors, float2* _tex_coords, uint _num_vertices, uint _num_tris, const float3& centroid): id(App->scene->last_mesh_id++) 
+Mesh::Mesh(float* _vertices, Tri* _tris, uint _num_vertices, uint _num_tris, const float3& centroid): id(App->scene->last_mesh_id++)
 {
-	num_vertices	= _num_vertices;
-	vertices		= _vertices;
-	num_tris		= _num_tris;
-	tris			= _tris;
+	num_vertices		= _num_vertices;
+	vertex_one_buffer	= _vertices;
+	num_tris			= _num_tris;
+	tris				= _tris;
+	num_indices = num_tris * 3;
 
-	if (_normals)
-	{
-		imported_normals = true;
-		normals = _normals;
-	}
-	else 
-	{
-		normals = new float3[num_vertices];
-		for (int i = 0; i < num_vertices; i++)	normals[i] = { 0.0f, 0.0f, 0.0f };
-	}
-
-	if (_colors)
-	{
-		imported_colors = true;
-		colors = _colors;
-	}
-	else
-	{
-		colors = new float3[num_vertices];
-		Color random_color;
-		random_color.setRandom();
-
-		for (int i = 0; i < num_vertices; i++)	colors[i] = { random_color.r, random_color.g, random_color.b };
-	}
-
-	if (_tex_coords)
-	{
-		imported_tex_coords = true;
-		tex_coords = _tex_coords;
-	}
-	else 
-	{
-		tex_coords = new float2[num_vertices];
-		for (int i = 0; i < num_vertices; i++)
-			tex_coords[i] = float2::zero;
-	}
 
 	calculateCentroidandHalfsize();
 	this->centroid = centroid;
@@ -76,8 +41,8 @@ Mesh::Mesh(PrimitiveTypes primitive) : id(App->scene->last_mesh_id++)
 	{
 	case Primitive_Cube:	 BuildCube(); break;
 	case Primitive_Plane:	 BuildPlane(); break;
-	case Primitive_Sphere:	 BuildSphere(); break;
-	case Primitive_Cylinder: BuildCylinder(); break;
+	//case Primitive_Sphere:	 BuildSphere(); break;
+	//case Primitive_Cylinder: BuildCylinder(); break;
 	default:
 		break;
 	}
@@ -94,12 +59,12 @@ Mesh::~Mesh()
 		glDeleteBuffers(1, &iboId);
 	if (vboId != 0)
 		glDeleteBuffers(1, &vboId);
+	if (vaoId != 0)
+		glDeleteBuffers(1, &vaoId);
 
-	if (vertices)	delete vertices;
-	if (tris)		delete tris;
-	if (normals)	delete normals;
-	if (colors)		delete colors;
-	if (tex_coords) delete tex_coords;
+	if (vertex_one_buffer)	delete vertex_one_buffer;
+	if (tris)	delete tris;
+
 }
 
 void Mesh::LoadDataToVRAM()
@@ -108,38 +73,44 @@ void Mesh::LoadDataToVRAM()
 	glGenBuffers(1, &vboId);    // for vertex buffer
 	glGenBuffers(1, &iboId);    // for index buffer
 
-	size_t vSize = sizeof(float3) * num_vertices;
-	size_t tSize = sizeof(float2) * num_vertices;
 
 	// copy vertex attribs data to VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
-	glBufferData(GL_ARRAY_BUFFER, vSize + vSize + vSize + tSize, 0, GL_STATIC_DRAW); // reserve space
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, vertices);                  // copy verts at offset 0
-	glBufferSubData(GL_ARRAY_BUFFER, vSize, vSize, normals);               // copy norms after verts
-	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize, vSize, colors);          // copy cols after norms
-	glBufferSubData(GL_ARRAY_BUFFER, vSize + vSize + vSize, tSize, tex_coords); // copy texs after cols
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertices*13 , vertex_one_buffer, GL_STATIC_DRAW); // reserve space
+
 	
 	// copy index data to VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float3) * num_tris, tris, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * num_indices, tris, GL_STATIC_DRAW);
 
-	//Enable Attrib Pointers
-	//POS
-	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	//COLOR
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	//NORMAL
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	//TEXCOORD
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (GLvoid*)(9 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(3);*/
 	
 	//Unbind Buffers
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	//create VAO
+	glGenVertexArrays(1, &vaoId);
+
+	glBindVertexArray(vaoId);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);//vertices
+
+	//vertex pos
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(0 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(0);
+	//colors
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	//normals
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+	//texcoords
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(10 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(3);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);//indices
+
+	//Bind to 0
+	glBindVertexArray(0);
 }
 
 
@@ -162,13 +133,12 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	else if(!draw_as_selected)	glEnableClientState(GL_COLOR_ARRAY);
 
 	// bind VBOs before drawing
-	glBindBuffer(GL_ARRAY_BUFFER, vboId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+	glBindVertexArray(vaoId);
 
 	// enable vertex arrays
-	glEnableClientState(GL_VERTEX_ARRAY);
+	/*glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);*/
 
 	if (draw_as_selected)
 	{
@@ -178,14 +148,14 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 
 	if (diffuse_tex)		glBindTexture(GL_TEXTURE_2D, diffuse_tex->getGLid());
 
-	size_t Offset = sizeof(float3) * num_vertices;
+	//size_t Offset = sizeof(float3) * num_vertices;
 
 	// specify vertex arrays with their offsets
-	glVertexPointer(3, GL_FLOAT, 0, (void*)0);
+	/*glVertexPointer(3, GL_FLOAT, 0, (void*)0);
 	glNormalPointer(GL_FLOAT, 0, (void*)Offset);
 	glColorPointer(3, GL_FLOAT, 0, (void*)(Offset * 2));
-	glTexCoordPointer(2, GL_FLOAT, 0, (void*)(Offset * 3));
-	glDrawElements(GL_TRIANGLES, num_tris * 3, GL_UNSIGNED_INT, NULL);
+	glTexCoordPointer(2, GL_FLOAT, 0, (void*)(Offset * 3));*/
+	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, NULL);
 
 	if (diffuse_tex)		glBindTexture(GL_TEXTURE_2D, 0);
 	else					glDisableClientState(GL_COLOR_ARRAY);
@@ -196,13 +166,14 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 		glLineWidth(1.0f);
 	}
 	 
-	glDisableClientState(GL_VERTEX_ARRAY);
+	/*glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
 
 	// unbind VBOs
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	if (diffuse_tex)		glDisable(GL_TEXTURE_2D);
 
@@ -216,102 +187,199 @@ void Mesh::DrawNormals() const
 	float3 centroid = float3::zero;
 	float3 h_s = float3::zero;
 
-	for (int i = 0; i < num_vertices; i++)
+	for (int i = 0; i < num_vertices; i+=13)
 	{
-		glVertex3f(vertices[i].x, vertices[i].y, vertices[i].z);
-		glVertex3f(vertices[i].x + (normals[i].x * 0.2f), vertices[i].y + (normals[i].y * 0.2f), vertices[i].z + (normals[i].z * 0.2f));
+		glVertex3f(vertex_one_buffer[i], vertex_one_buffer[i+1], vertex_one_buffer[i+2]);
+		glVertex3f(vertex_one_buffer[i] + (vertex_one_buffer[i+7] * 0.2f), vertex_one_buffer[i+1] + (vertex_one_buffer[i+8] * 0.2f), vertex_one_buffer[i+2] + (vertex_one_buffer[i+9] * 0.2f));
 	}
 
 	glEnd();
 }
 
-void Mesh::BuildCube(float3& size)
+void Mesh::BuildCube()
 {
-	size.x *= 0.5f; size.y *= 0.5f; size.z *= 0.5f;
+	uint ind[6 * 6] =
+	{
+		2, 7, 6, 2, 3, 7, // front
+		11, 9, 10, 11, 8, 9, // right
+		1, 4, 0, 1, 5, 4, // back
+		15, 13, 12, 15, 14, 13, // left
+		1, 3, 2, 1, 0, 3, // top
+		7, 5, 6, 7, 4, 5  // bottom
+	};
 
-	mesh_name = "CUBE";
-	num_vertices = 8;
-	vertices = new float3[num_vertices];
-
-	vertices[0] = { -size.x, -size.y, -size.z };
-	vertices[1] = { size.x, -size.y, -size.z };
-	vertices[2] = { -size.x, -size.y, size.z };
-	vertices[3] = { size.x, -size.y, size.z };
-
-	vertices[4] = { -size.x, size.y, -size.z };
-	vertices[5] = { size.x, size.y, -size.z };
-	vertices[6] = { -size.x, size.y, size.z };
-	vertices[7] = { size.x, size.y, size.z };
-
-	num_tris = 12;
+	uint num_indices = 6 * 6;
+	num_tris = num_indices / 3;
+	uint size = sizeof(Tri) * num_tris;
 	tris = new Tri[num_tris];
+	memcpy(tris, ind, size);
 
-	tris[0].set(0, 1, 2);	tris[1].set(3, 2, 1);	//front
-	tris[2].set(6, 5, 4);	tris[3].set(5, 6, 7);	//back
-	tris[4].set(5, 3, 1);	tris[5].set(3, 5, 7);	//up
-	tris[6].set(0, 2, 4);	tris[7].set(6, 4, 2);	//down
-	tris[8].set(4, 1, 0);	tris[9].set(1, 4, 5);	//left
-	tris[10].set(2, 3, 6);	tris[11].set( 7, 6, 3 );	//right  
+	//  vertices ------------------------
+	float vert[16 * 3] =
+	{
+		0.5f,  0.5f,  0.5f, // 0
+		-0.5f,  0.5f,  0.5f, // 1
+		-0.5f,  0.5f, -0.5f, // 2
+		0.5f,  0.5f, -0.5f, // 3
 
-	normals = new float3[num_vertices];
-	for (int i = 0; i < num_vertices; i++)
-		normals[i] = vertices[i].Normalized();
+		0.5f, -0.5f,  0.5f, // 4
+		-0.5f, -0.5f,  0.5f, // 5
+		-0.5f, -0.5f, -0.5f, // 6
+		0.5f, -0.5f, -0.5f, // 7
 
+		0.5f,  0.5f,  0.5f,  // 8
+		0.5f, -0.5f,  0.5f,  // 9
+		0.5f, -0.5f, -0.5f,  //10
+		0.5f,  0.5f, -0.5f,  //11
 
-	colors = new float3[num_vertices];
-	Color random_color;
-	random_color.setRandom();
+		-0.5f,  0.5f,  0.5f,  //12
+		-0.5f, -0.5f,  0.5f,  //13
+		-0.5f, -0.5f, -0.5f,  //14
+		-0.5f,  0.5f, -0.5f,  //15
+	};
 
-	for (int i = 0; i < num_vertices; i++)
-		colors[i] = { random_color.r, random_color.g, random_color.b };
+	num_vertices = 16;
+	size = sizeof(float) * num_vertices * 3;
+	float* vertices = new float[num_vertices * 3];
+	memcpy(vertices, vert, size);
 
-	tex_coords = new float2[36];
+	// Load texture coords
+	float texture_coords[16 * 3] =
+	{
+		1.f,  1.f,  0.f,
+		0.f,  1.f,  0.f,
+		0.f,  0.f,  0.f,
+		1.f,  0.f,  0.f,
 
-	tex_coords[0] = { 0.0f, 0.0f }; tex_coords[1] = { 1.0f, 0.0f };
-	tex_coords[2] = { 0.0f, 1.0f }; tex_coords[3] = { 1.0f, 1.0f };
-	tex_coords[4] = { 0.0f, 0.0f }; tex_coords[5] = { 1.0f, 0.0f };
-	tex_coords[6] = { 0.0f, 1.0f }; tex_coords[7] = { 1.0f, 1.0f };
+		1.f,  0.f,  0.f,
+		0.f,  0.f,  0.f,
+		0.f,  1.f,  0.f,
+		1.f,  1.f,  0.f,
+
+		1.f,  1.f,  0.f,
+		0.f,  1.f,  0.f,
+		0.f,  0.f,  0.f,
+		1.f,  0.f,  0.f,
+
+		0.f,  1.f,  0.f,
+		1.f,  1.f,  0.f,
+		1.f,  0.f,  0.f,
+		0.f,  0.f,  0.f,
+	};
+
+	float* tex_coords = new float[num_vertices * 3];
+	memcpy(tex_coords, texture_coords, size);
+
+	vertex_one_buffer = new float[num_vertices * 13]; 
+
+	float* normals = nullptr;
+	float null[3] = { 0.f,0.f,0.f };
+	float null_color[4] = { 1.f,1.f,1.f,1.f };
+	for (int i = 0; i < num_vertices; ++i)
+	{
+
+		memcpy(vertex_one_buffer + i * 13, vertices + i * 3, sizeof(float) * 3);
+
+		memcpy(vertex_one_buffer + i * 13 + 3, null_color, sizeof(float) * 4);
+
+		if (normals != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 7, normals + i * 3, sizeof(float) * 3);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 7, null, sizeof(float) * 3);
+
+		if (tex_coords != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 10, tex_coords + i * 3, sizeof(float) * 3);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 10, null, sizeof(float) * 3);
+
+	}
 
 }
 
 void Mesh::BuildPlane(float sx, float sy)
 {
-	sx *= 0.5f, sy *= 0.5f;
+	float length = sx;
+	float width = sy;
+	int resX = 2; 
+	int resZ = 2;
 
-	mesh_name = "PLANE";
-	num_vertices = 8;
-	vertices = new float3[num_vertices];
+	num_vertices = resX * resZ;
+	float3 ver[4];
+	for (int i = 0; i < resZ; ++i)
+	{
+		// [ -length / 2, length / 2 ]
+		float zPos = ((float)i / (resZ - 1) - .5f) * length;
+		for (int j = 0; j < resX; ++j)
+		{
+			// [ -width / 2, width / 2 ]
+			float xPos = ((float)j / (resX - 1) - .5f) * width;
+			ver[j + i * resX] = float3(xPos, 0.f, zPos);
+		}
+	}
 
-	vertices[0] = { -sx, -sy, 0 }; vertices[1] = { sx, -sy, 0 };
-	vertices[2] = { -sx, sy, 0 };  vertices[3] = { sx, sy, 0 };
-	vertices[4] = { -sx, -sy, 0 }; vertices[5] = { sx, -sy, 0 };
-	vertices[6] = { -sx, sy, 0 };  vertices[7] = { sx, sy, 0 };
+	float* vertices = new float[num_vertices * 3];
+	for (int i = 0; i < num_vertices; ++i)
+	{
+		memcpy(vertices + i * 3, ver[i].ptr(), sizeof(float) * 3);
+	}
 
-	num_tris = 4;
-	tris = new Tri[num_tris];
+	uint num_indices = (resX - 1) * (resZ - 1) * 6;
+	uint ind[6];
+	int t = 0;
+	for (int k = 0; k < num_indices / 6; ++k)
+	{
+		int l = k % (resX - 1) + (k / (resZ - 1) * resX);
 
-	tris[0].set( 0, 1, 2);	tris[1].set( 3, 2, 1);
-	tris[2].set( 6, 5, 4);	tris[3].set( 7, 5, 6);
+		ind[t++] = l + resX;
+		ind[t++] = l + 1;
+		ind[t++] = l;
+				   
+		ind[t++] = l + resX;
+		ind[t++] = l + resX + 1;
+		ind[t++] = l + 1;
+	}
+	tris = new Tri[num_indices/3];
+	memcpy(tris, ind, sizeof(Tri)*(num_indices/3));
 
-	normals = new float3[num_vertices];
-	for (int i = 0; i < num_vertices; i++)
-		normals[i] = vertices[i].Normalized();
+	//uv
+	float3 uvs[4];
+	for (int v = 0; v < resZ; v++)
+	{
+		for (int u = 0; u < resX; u++)
+		{
+			uvs[u + v * resX] = float3((float)u / (resX - 1), (float)v / (resZ - 1), 0.f);
+		}
+	}
 
-	colors = new float3[num_vertices];
-	Color random_color;
-	random_color.setRandom();
+	float* tex_coords = new float[num_vertices * 3];
+	for (int i = 0; i < num_vertices; ++i)
+	{
+		memcpy(tex_coords + i * 3, uvs[i].ptr(), sizeof(float) * 3);
+	}
 
-	for (int i = 0; i < num_vertices; i++)
-		colors[i] = { random_color.r, random_color.g, random_color.b };
+	vertex_one_buffer = new float[num_vertices * 13];
+	float null[3] = { 0.f,0.f,0.f };
+	float null_color[4] = { 1.f,1.f,1.f,1.f };
+	for (int i = 0; i < num_vertices; ++i)
+	{
 
-	tex_coords = new float2[num_vertices];
-	tex_coords[0] = { 0.0f, 0.0f };   tex_coords[1] = { 1.0f, 0.0f };
-	tex_coords[2] = { 0.0f, 1.0f };   tex_coords[3] = { 1.0f, 1.0f };
-	tex_coords[4] = { 0.0f, 0.0f }; tex_coords[5] = { 1.0f, 0.0f };
-	tex_coords[6] = { 0.0f, 1.0f }; tex_coords[7] = { 1.0f, 1.0f };
+		memcpy(vertex_one_buffer + i * 13, vertices + i * 3, sizeof(float) * 3);
+
+		
+		memcpy(vertex_one_buffer + i * 13 + 3, null_color, sizeof(float) * 4); //colors
+
+		
+		memcpy(vertex_one_buffer + i * 13 + 7, null, sizeof(float) * 3); //normals
+
+		if (tex_coords != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 10, tex_coords + i * 3, sizeof(float) * 3);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 10, null, sizeof(float) * 3);
+
+	}
 }
 
-void Mesh::BuildSphere(float radius, float sectorCount, float stackCount) {
+/*void Mesh::BuildSphere(float radius, float sectorCount, float stackCount) {
 
 	// Sphere (code from http://www.songho.ca/opengl/gl_sphere.html)
 
@@ -402,9 +470,9 @@ void Mesh::BuildCylinder(float radius, float length, int numSteps) {
 
 	mesh_name = "CYLINDER";
 	num_vertices = numSteps * 2 + 2;
-	vertices = new float3[num_vertices];
-	normals = new float3[num_vertices];
-	tex_coords = new float2[num_vertices];
+	vertices = new float[num_vertices*3];
+	normals = new float[num_vertices*3];
+	tex_coords = new float[num_vertices*2];
 	colors = new float3[num_vertices];
 
 	Color random_color;
@@ -449,18 +517,19 @@ void Mesh::BuildCylinder(float radius, float length, int numSteps) {
 
 	for (int i = 0; i < num_vertices; i++)
 		normals[i] = vertices[i].Normalized();
-}
+}*/
 
 
 
 bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 {
 	//vertices
+	float* vertices = nullptr;
 	if (imported_mesh.mNumVertices)
 	{
 		num_vertices = imported_mesh.mNumVertices;
-		vertices = new float3[num_vertices];
-		memcpy(vertices, imported_mesh.mVertices, sizeof(float3) * num_vertices);
+		vertices = new float[num_vertices*3];
+		memcpy(vertices, imported_mesh.mVertices, sizeof(float) * num_vertices* 3);
 	}
 	else
 		return false;
@@ -482,63 +551,67 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 		return false;
 
 	// normals
-	normals = new float3[num_vertices];
+	float* normals = nullptr;
+	normals = new float[num_vertices*3 ];
 	if (imported_mesh.HasNormals())
 	{
 		imported_normals = true;
-		memcpy(normals, imported_mesh.mNormals, sizeof(float3) * num_vertices);
-	}
-	else
-	{
-		for (int i = 0; i < num_vertices; i++)
-			normals[i] = { 0.0f, 0.0f, 0.0f };
+		memcpy(normals, imported_mesh.mNormals, sizeof(float) * num_vertices* 3);
 	}
 
 	// colors
-	colors = new float3[num_vertices];
-	aiColor3D color(-1.0f, 0.0f, 0.0f);
-	scene.mMaterials[imported_mesh.mMaterialIndex]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-
-	if (color.r != -1.0f)
+	float* colors = nullptr;
+	if (imported_mesh.HasVertexColors(0))
 	{
 		imported_colors = true;
-		for (int i = 0; i < num_vertices; i++)
-			colors[i] = { color.r, color.g, color.b };
-	}
-	else
-	{
-		if (imported_mesh.HasVertexColors(0))
-		{
-			imported_colors = true;
-			memcpy(colors, imported_mesh.mColors[0], sizeof(float3) * num_vertices);
-		}
-		else
-		{
-			Color random_color;
-			random_color.setRandom();
-
-			for (int i = 0; i < num_vertices; i++)
-				colors[i] = { random_color.r, random_color.g, random_color.b };
-		}
+		colors = new float[num_vertices * 4];
+		memcpy(colors, imported_mesh.mColors[0], sizeof(float) * num_vertices * 4);
 	}
 
 	// texture coordinates
-	tex_coords = new float2[num_vertices];
+	float* tex_coords = nullptr;
+	
 	if (imported_mesh.HasTextureCoords(0))
 	{
 		imported_tex_coords = true;
-		for (int i = 0; i < num_vertices; i++)
-			tex_coords[i] = { imported_mesh.mTextureCoords[0][i].x, imported_mesh.mTextureCoords[0][i].y };
+		tex_coords = new float[num_vertices*3];
+		memcpy(tex_coords, imported_mesh.mTextureCoords[0], sizeof(float)* num_vertices * 3);
 	}
-	else
-	{
-		for (int i = 0; i < num_vertices; i++)
-			tex_coords[i] = float2::zero;
-	}
+	
 	calculateCentroidandHalfsize();
 
-	for (int i = 0; i < num_vertices; i++)
-		vertices[i] -= centroid;
+	for (int i = 0; i < num_vertices; i+=13)
+	{
+		vertex_one_buffer[i] -= centroid.x;
+		vertex_one_buffer[i+1] -= centroid.y;
+		vertex_one_buffer[i+2] -= centroid.z;
+	}
+
+	vertex_one_buffer = new float[num_vertices * 13];
+	float null[3] = { 0.f,0.f,0.f };
+	float null_color[4] = { 1.f,1.f,1.f,1.f };
+	for (int i = 0; i < num_vertices; ++i)
+	{
+
+		memcpy(vertex_one_buffer + i * 13, vertices + i * 3, sizeof(float) * 3);
+
+		if (colors != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 3, colors + i * 3, sizeof(float) * 4);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 3, null_color, sizeof(float) * 4);
+
+		if (normals != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 7, normals + i * 3, sizeof(float) * 3);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 7, null, sizeof(float) * 3);
+
+		if (tex_coords != nullptr)
+			memcpy(vertex_one_buffer + i * 13 + 10, tex_coords + i * 3, sizeof(float) * 3);
+		else
+			memcpy(vertex_one_buffer + i * 13 + 10, null, sizeof(float) * 3);
+	
+	}
+		
 
 	return true;
 }
@@ -548,17 +621,17 @@ void Mesh::calculateCentroidandHalfsize()
 	float3 lowest_p = float3::inf;
 	float3 highest_p = -float3::inf;
 
-	if (vertices)
+	if (vertex_one_buffer)
 	{
-		for (int i = 0; i < num_vertices; i++)
+		for (int i = 0; i < num_vertices; i+=13)
 		{
-			if (lowest_p.x > vertices[i].x) lowest_p.x = vertices[i].x;
-			if (lowest_p.y > vertices[i].y) lowest_p.y = vertices[i].y;
-			if (lowest_p.z > vertices[i].z) lowest_p.z = vertices[i].z;
+			if (lowest_p.x > vertex_one_buffer[i]) lowest_p.x = vertex_one_buffer[i];
+			if (lowest_p.y > vertex_one_buffer[i+1]) lowest_p.y = vertex_one_buffer[i+1];
+			if (lowest_p.z > vertex_one_buffer[i+2]) lowest_p.z = vertex_one_buffer[i+2];
 
-			if (highest_p.x < vertices[i].x) highest_p.x = vertices[i].x;
-			if (highest_p.y < vertices[i].y) highest_p.y = vertices[i].y;
-			if (highest_p.z < vertices[i].z) highest_p.z = vertices[i].z;
+			if (highest_p.x < vertex_one_buffer[i]) highest_p.x = vertex_one_buffer[i];
+			if (highest_p.y < vertex_one_buffer[i+1]) highest_p.y = vertex_one_buffer[i+1];
+			if (highest_p.z < vertex_one_buffer[i+2]) highest_p.z = vertex_one_buffer[i+2];
 		}
 	}
 
@@ -580,13 +653,11 @@ void Mesh::ClearData()
 {
 	glDeleteBuffers(1, &iboId);
 	glDeleteBuffers(1, &vboId);
+	glDeleteBuffers(1, &vaoId);
 
-	if (vertices)	delete vertices;
-	if (tris)		delete tris;
-	if (normals)	delete normals;
-	if (colors)		delete colors;
-	if (tex_coords) delete tex_coords;
-	
+	if (vertex_one_buffer)	delete vertex_one_buffer;
+	if (tris)	delete tris;
+
 	imported_normals = imported_colors = imported_tex_coords = false;
-	num_vertices = num_tris = iboId = vboId = 0;
+	num_vertices = num_tris = num_indices = iboId = vboId = vaoId = 0;
 }

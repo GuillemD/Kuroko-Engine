@@ -81,6 +81,13 @@ void ComponentMesh::Draw() const
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
 				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+
+				GLint modelLoc = glGetUniformLocation(program_id, "model_matrix");
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
+				GLint viewLoc = glGetUniformLocation(program_id, "view_matrix");
+				glUniformMatrix4fv(viewLoc,1,GL_FALSE, App->camera->GetViewMatrix());
+				GLint projLoc = glGetUniformLocation(program_id, "projection_matrix");
+				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
 				
 				
 			}

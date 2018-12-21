@@ -8,7 +8,7 @@
 
 Skybox::Skybox(float distance) : distance(distance)
 {
-	uint num_vertices = 4;
+/*	uint num_vertices = 4;
 	uint num_tris = 2;
 
 	for (int i = 0; i < 6; i++)
@@ -83,8 +83,8 @@ Skybox::Skybox(float distance) : distance(distance)
 		normals[0] = vertices[0].Neg().Normalized();	normals[1] = vertices[1].Neg().Normalized();
 		normals[2] = vertices[2].Neg().Normalized();	normals[3] = vertices[3].Neg().Normalized();
 
-		planes[i] = new Mesh(vertices, indices, normals, colors, tex_coords, num_vertices, num_tris);
-	}
+		planes[i] = new Mesh(vertices, indices,num_vertices, num_tris);
+	}*/
 }
 
 Skybox::~Skybox()
@@ -98,7 +98,7 @@ Skybox::~Skybox()
 
 void Skybox::Draw() const
 {
-	if (planes.size() == 6 && textures.size() == 6)
+	/*if (planes.size() == 6 && textures.size() == 6)
 	{
 		float4x4 view_mat = float4x4::identity;
 
@@ -156,5 +156,5 @@ void Skybox::Draw() const
 			if (diffuse_tex)		glDisable(GL_TEXTURE_2D);
 		}
 		glLoadMatrixf((GLfloat*)view_mat.v);
-	}
+	}*/
 }

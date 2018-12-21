@@ -59,9 +59,9 @@ bool ModuleRenderer3D::Init(const JSON_Object* config)
 			ret = false;
 		}
 
-		/*//Initialize Modelview Matrix
+		//Initialize Modelview Matrix
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();*/
+		glLoadIdentity();
 
 		//Check for error
 		error = glGetError();
