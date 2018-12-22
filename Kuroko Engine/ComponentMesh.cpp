@@ -69,26 +69,25 @@ void ComponentMesh::Draw() const
 		if (App->camera->current_camera->frustumCull(*obb))
 		{
 			ComponentTransform* transform = nullptr;
-			float4x4 view_mat = float4x4::identity;
+			//float4x4 view_mat = float4x4::identity;
 
 			
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
 
-				GLfloat matrix[16];
+				/*GLfloat matrix[16];
 				glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 				view_mat.Set((float*)matrix);
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
-				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);*/
 
 				GLint modelLoc = glGetUniformLocation(program_id, "model_matrix");
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
 				GLint viewLoc = glGetUniformLocation(program_id, "view_matrix");
-				glUniformMatrix4fv(viewLoc,1,GL_FALSE, App->camera->GetViewMatrix());
+				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix());
 				GLint projLoc = glGetUniformLocation(program_id, "projection_matrix");
 				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
-				
 				
 			}
 
@@ -99,11 +98,13 @@ void ComponentMesh::Draw() const
 			if (wireframe || App->scene->global_wireframe)	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			else											glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+			
+
 			mesh_from_resource->Draw(mat);
 
 
-			if (transform)
-				glLoadMatrixf((GLfloat*)view_mat.v);
+			/*if (transform)
+				glLoadMatrixf((GLfloat*)view_mat.v);*/
 		}
 	}
 }
@@ -113,20 +114,29 @@ void ComponentMesh::DrawSelected() const
 	if (Mesh* mesh_from_resource = getMeshFromResource())
 	{
 		OBB* obb = ((ComponentAABB*)getParent()->getComponent(C_AABB))->getOBB();
+		uint program_id = my_shader->getId();
+		my_shader->UseProgram();
 
 		if (App->camera->current_camera->frustumCull(*obb))
 		{
 			ComponentTransform* transform = nullptr;
-			float4x4 view_mat = float4x4::identity;
+			//float4x4 view_mat = float4x4::identity;
 
 			if (transform = (ComponentTransform*)getParent()->getComponent(TRANSFORM))
 			{
-				GLfloat matrix[16];
+				/*GLfloat matrix[16];
 				glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 				view_mat.Set((float*)matrix);
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
-				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);
+				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);*/
+
+				GLint modelLoc = glGetUniformLocation(program_id, "model_matrix");
+				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
+				GLint viewLoc = glGetUniformLocation(program_id, "view_matrix");
+				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix());
+				GLint projLoc = glGetUniformLocation(program_id, "projection_matrix");
+				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
 			}
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -134,13 +144,14 @@ void ComponentMesh::DrawSelected() const
 
 			Mesh* mesh_from_resource = getMeshFromResource();
 
+			
 
 			mesh_from_resource->Draw(nullptr, true);
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-			if (transform)
-				glLoadMatrixf((GLfloat*)view_mat.v);
+			/*if (transform)
+				glLoadMatrixf((GLfloat*)view_mat.v);*/
 		}
 	}
 }

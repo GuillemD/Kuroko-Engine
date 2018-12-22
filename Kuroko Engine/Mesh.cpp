@@ -98,7 +98,7 @@ void Mesh::LoadDataToVRAM()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(0 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(0);
 	//colors
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 	//normals
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
@@ -578,16 +578,12 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 		memcpy(tex_coords, imported_mesh.mTextureCoords[0], sizeof(float)* num_vertices * 3);
 	}
 	
-	calculateCentroidandHalfsize();
-
-	for (int i = 0; i < num_vertices; i+=13)
-	{
-		vertex_one_buffer[i] -= centroid.x;
-		vertex_one_buffer[i+1] -= centroid.y;
-		vertex_one_buffer[i+2] -= centroid.z;
-	}
-
+	
 	vertex_one_buffer = new float[num_vertices * 13];
+
+	
+
+	
 	float null[3] = { 0.f,0.f,0.f };
 	float null_color[4] = { 1.f,1.f,1.f,1.f };
 	for (int i = 0; i < num_vertices; ++i)
@@ -611,7 +607,14 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 			memcpy(vertex_one_buffer + i * 13 + 10, null, sizeof(float) * 3);
 	
 	}
-		
+
+	calculateCentroidandHalfsize();
+	for (int i = 0; i < num_vertices; i += 13)
+	{
+		vertex_one_buffer[i] -= centroid.x;
+		vertex_one_buffer[i + 1] -= centroid.y;
+		vertex_one_buffer[i + 2] -= centroid.z;
+	}
 
 	return true;
 }
