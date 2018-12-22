@@ -475,7 +475,7 @@ void ModuleUI::DrawObjectInspectorTab()
 		if (ImGui::Button("Rename")){
 			show_rename = true;
 		}
-
+		
 		ImGui::SameLine();
 		if (ImGui::Button("Delete") || App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN)
 			App->scene->deleteGameObjectRecursive(selected_obj);
@@ -620,7 +620,7 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 
 						
 
-						if(ImGui::TreeNode("diffuse"))
+						if(ImGui::TreeNode("Diffuse"))
 						{
 							Texture* texture = nullptr;
 							if(ResourceTexture* tex_res = (ResourceTexture*)App->resources->getResource(material->getTextureResource(DIFFUSE)))
@@ -655,24 +655,97 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 
 						if (ImGui::TreeNode("Shaders"))
 						{
+							static bool vertshow_entername;
+							static bool fragshow_entername;
 							
-							if (ImGui::Button("New Shader"))
+							if (ImGui::Button("New Vertex Shader"))
+							{																	
+								vertshow_entername = true;								
+							}
+							if (vertshow_entername)
 							{
-								c_mesh->GetMyShaderProgram();
-								//App->fs.CreateEmptyFile(,ASSETS_SHADERS , VERTEX_SHADER_EXTENSION);
+								vertshow_entername = true;
+								char* newfile = "";
+								disable_keyboard_control = true;
+								ImGui::SetNextWindowPos(ImVec2(700, 320));
+								ImGui::Begin("New Script Name", &vertshow_entername);
+								ImGui::PushFont(ui_fonts[REGULAR]);
+
+								static char rename_buffer[64];
+								ImGui::InputText("##Rename to", rename_buffer, 64);
+
+								ImGui::SameLine();
+								if (ImGui::Button("OK"))
+								{
+									newfile = rename_buffer;
+									App->fs.CreateEmptyFile(newfile, ASSETS_SHADERS, VERTEX_SHADER_EXTENSION);
+									App->fs.FormFullPath(shader_path, newfile, ASSETS_SHADERS, VERTEX_SHADER_EXTENSION);
+
+									const char* sourcecode = "";
+									Shader* newshader = new Shader(VERTEX);
+									std::ifstream in(newfile);
+									std::string text((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+									sourcecode = text.c_str();
+									newshader->CreateVertexShader(sourcecode);
+									c_mesh->SetVertexShader(newshader);
+
+									shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
+									App->shaders->TryPushShader(newshader);
+									vertshow_entername = false;
+								}
+
+								ImGui::PopFont();
+								ImGui::End();
 							}
 
-							
+							if (ImGui::Button("New Fragment Shader"))
+							{
+								fragshow_entername = true;
+							}
+
+							if (fragshow_entername)
+							{
+								fragshow_entername = true;
+								char* newfile = "";
+								disable_keyboard_control = true;
+								ImGui::SetNextWindowPos(ImVec2(700, 320));
+								ImGui::Begin("New Script Name", &fragshow_entername);
+								ImGui::PushFont(ui_fonts[REGULAR]);
+
+								static char rename_buffer[64];
+								ImGui::InputText("##Rename to", rename_buffer, 64);
+
+								ImGui::SameLine();
+								if (ImGui::Button("OK"))
+								{
+									newfile = rename_buffer;
+									App->fs.CreateEmptyFile(newfile, ASSETS_SHADERS, FRAGMENT_SHADER_EXTENSION);
+									App->fs.FormFullPath(shader_path, newfile, ASSETS_SHADERS, FRAGMENT_SHADER_EXTENSION);
+									const char* sourcecode = "";
+									Shader* newshader = new Shader(FRAGMENT);
+									std::ifstream in(newfile);
+									std::string text((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+									sourcecode = text.c_str();
+									newshader->CreateFragmentShader(sourcecode);
+									c_mesh->SetFragmentShader(newshader);
+									shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetFragmentShader()->GetSourceCode());
+									App->shaders->TryPushShader(newshader);
+									fragshow_entername = false;
+								}
+
+								ImGui::PopFont();
+								ImGui::End();
+							}
 
 							if (ImGui::Button("Load Vertex Shader from Assets"))
 							{
 
-								std::string _shader_path = openFileWID();								
-								Shader* newshader = new Shader(VERTEX);
+								std::string _shader_path = openFileWID();
+								shader_path = _shader_path;
 								const char* nom = "";
+								Shader* newshader = new Shader(VERTEX);
 								std::ifstream in(_shader_path);
-								std::string text((std::istreambuf_iterator<char>(in)),
-									std::istreambuf_iterator<char>());
+								std::string text((std::istreambuf_iterator<char>(in)),std::istreambuf_iterator<char>());
 								nom = text.c_str();														
 								newshader->CreateVertexShader(nom);						
 								c_mesh->SetVertexShader(newshader);
@@ -684,7 +757,7 @@ bool ModuleUI::DrawComponent(Component& component, int id)
 							if (ImGui::Button("Edit Vertex Shader"))
 							{									
 								shader_editor.SetText(c_mesh->GetMyShaderProgram()->GetVertexShader()->GetSourceCode());
-								
+								//shader_path=thefuck the path for this shader is
 								
 							}
 							if (ImGui::Button("Edit Fragment Shader"))

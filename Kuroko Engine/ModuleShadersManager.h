@@ -43,10 +43,14 @@ public:
 
 	Shader* GetShaderByIndex(int i) { return shaders[i]; }
 	ShaderProgram* GetShaderProgramByIndex(int i) { return programs[i]; }
+
+	void TryPushShader(Shader* _shader);
 private:
 	
 	std::vector<Shader*> shaders;
 	std::vector<ShaderProgram*> programs;
+
+
 	Shader* default_vertex_shader = nullptr;
 	Shader* default_fragment_shader = nullptr;
 	ShaderProgram* default_shader_program = nullptr;

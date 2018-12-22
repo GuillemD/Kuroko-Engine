@@ -196,3 +196,12 @@ void ModuleShadersManager::AddShaderProgram(ShaderProgram* program) {
 	programs.push_back(program);
 
 }
+
+void ModuleShadersManager::TryPushShader(Shader * _shader)
+{
+	Shader* tmp = nullptr;
+	tmp= FindShaderByUniqueId(_shader->getId());
+	if (tmp == nullptr) {
+		shaders.push_back(_shader);
+	}
+}
