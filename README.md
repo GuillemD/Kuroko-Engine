@@ -6,3 +6,6 @@ In the following video you can see how we use a Vertex Shader and a Fragment sha
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/7tExj-Y8Q64/0.jpg)](https://www.youtube.com/watch?v=7tExj-Y8Q64)
 
 
+In this gifs you can see how the in-Engine shader Editor works:
+
+
