@@ -73,12 +73,12 @@ void ModuleCamera3D::updateFOVfromWindow()
 	background_camera->getFrustum()->horizontalFov = 2* math::Atan(math::Tan(background_camera->getFrustum()->verticalFov/2) * aspect_ratio);
 }
 
-float * ModuleCamera3D::GetProjectionMatrix() const
+math::float4x4 ModuleCamera3D::GetProjectionMatrix() const
 {
 	return current_camera->GetProjection();
 }
 
-float * ModuleCamera3D::GetViewMatrix() const
+math::float4x4 ModuleCamera3D::GetViewMatrix() const
 {
 	return current_camera->GetView();
 }

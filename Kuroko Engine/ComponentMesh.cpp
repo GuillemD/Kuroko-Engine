@@ -84,9 +84,9 @@ void ComponentMesh::Draw() const
 				GLint modelLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "model_matrix");
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
 				GLint viewLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "view_matrix");
-				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix());
+				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
 				GLint projLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "projection_matrix");
-				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
+				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix().ptr());
 				
 			}
 
@@ -133,17 +133,15 @@ void ComponentMesh::DrawSelected() const
 				GLint modelLoc = glGetUniformLocation(program_id, "model_matrix");
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
 				GLint viewLoc = glGetUniformLocation(program_id, "view_matrix");
-				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix());
+				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
 				GLint projLoc = glGetUniformLocation(program_id, "projection_matrix");
-				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix());
+				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix().ptr());
 			}
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 			Mesh* mesh_from_resource = getMeshFromResource();
-
-			
 
 			mesh_from_resource->Draw(nullptr, true);
 

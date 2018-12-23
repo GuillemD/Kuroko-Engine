@@ -117,9 +117,8 @@ void ModuleShadersManager::SetDefaultShaders()
 	layout(location = 0) in vec3 position;\n\
 	layout(location = 1) in vec4 color;\n\
 	layout(location = 2) in vec3 normal;\n\
-	layout(location = 3) in vec3 texCoord;\n\\n\
+	layout(location = 3) in vec3 texCoord;\n\
 	out vec4 ourColor;\n\
-	out vec3 Normal;\n\
 	out vec3 TexCoord;\n\
 	uniform mat4 model_matrix;\n\
 	uniform mat4 view_matrix;\n\
@@ -145,7 +144,6 @@ void ModuleShadersManager::SetDefaultShaders()
 	char fragment_default[512] =
 		"#version 330 core\n\
 	in vec4 ourColor;\n\
-	in vec3 Normal;\n\
 	in vec2 TexCoord;\n\\n\
 	out vec4 color;\n\
 	uniform sampler2D ourTexture;\n\

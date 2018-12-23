@@ -62,8 +62,8 @@ public:
 	void updateFrustum();
 	void initFrameBuffer();
 
-	float* GetProjection() const;
-	float* GetView() const;
+	math::float4x4 GetProjection() ;
+	math::float4x4 GetView() ;
 
 public:
 

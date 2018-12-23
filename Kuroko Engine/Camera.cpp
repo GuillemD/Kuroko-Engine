@@ -219,18 +219,18 @@ void Camera::initFrameBuffer()
 
 }
 
-float * Camera::GetProjection() const
+math::float4x4 Camera::GetProjection() 
 {
-	static float4x4 proj;
+	math::float4x4 proj;
 	proj = frustum->ProjectionMatrix();
-	proj.Transpose();
-	return proj.ptr();
+
+	return proj.Transposed();
 }
 
-float * Camera::GetView() const
+math::float4x4 Camera::GetView() 
 {
-	static float4x4 view;
+	math::float4x4 view;
 	view = frustum->ViewMatrix();
-	view.Transpose();
-	return view.ptr();
+	
+	return view.Transposed();
 }

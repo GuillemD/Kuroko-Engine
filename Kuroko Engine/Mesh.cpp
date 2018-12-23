@@ -69,23 +69,32 @@ Mesh::~Mesh()
 
 void Mesh::LoadDataToVRAM()
 {
-	//create VAO
-	glGenVertexArrays(1, &vaoId);
-	// create VBOs
+	
+	// create VBO
 	glGenBuffers(1, &vboId);    // for vertex buffer
-	glGenBuffers(1, &iboId);    // for index buffer
-
-	//bind VAO
-	glBindVertexArray(vaoId);
 
 	// copy vertex attribs data to VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertices*13 , vertex_one_buffer, GL_STATIC_DRAW); // reserve space
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_vertices * 12, vertex_one_buffer, GL_STATIC_DRAW); // reserve space
 
-	
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &iboId);    // for index buffer
 	// copy index data to VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Tri) * num_tris, tris, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+	
+	//create VAO
+	glGenVertexArrays(1, &vaoId);
+	//bind VAO
+	glBindVertexArray(vaoId);
+	//bind vbo
+	glBindBuffer(GL_ARRAY_BUFFER, vboId);
+	
 
 	//vertex pos
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(0 * sizeof(GLfloat)));
@@ -100,11 +109,9 @@ void Mesh::LoadDataToVRAM()
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(10 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(3);
 
-	//Unbind Buffers
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//Bind to 0
+	//Unbind
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
@@ -127,7 +134,10 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	else if(!draw_as_selected)	glEnableClientState(GL_COLOR_ARRAY);
 
 	// bind VBOs before drawing
-	//glBindVertexArray(vaoId);
+	glBindVertexArray(vaoId);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+	glDrawElements(GL_TRIANGLES, num_tris*3, GL_UNSIGNED_INT, NULL);
 
 	// enable vertex arrays
 	/*glEnableClientState(GL_VERTEX_ARRAY);
@@ -165,9 +175,9 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
 
 	// unbind VBOs
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	glUseProgram(0);
 
 	if (diffuse_tex)		glDisable(GL_TEXTURE_2D);
 
@@ -568,37 +578,37 @@ bool Mesh::LoadFromAssimpMesh(const aiMesh& imported_mesh, const aiScene& scene)
 	if (imported_mesh.HasTextureCoords(0))
 	{
 		imported_tex_coords = true;
-		tex_coords = new float[num_vertices*3];
-		memcpy(tex_coords, imported_mesh.mTextureCoords[0], sizeof(float)* num_vertices * 3);
+		tex_coords = new float[num_vertices*2];
+		memcpy(tex_coords, imported_mesh.mTextureCoords[0], sizeof(float)* num_vertices * 2);
 	}
 	
 	
-	vertex_one_buffer = new float[num_vertices * 13];
+	vertex_one_buffer = new float[num_vertices * 12];
 
 	
 
-	
+	float null_coords[2] = { 0.f,0.f };
 	float null[3] = { 0.f,0.f,0.f };
 	float null_color[4] = { 1.f,1.f,1.f,1.f };
 	for (int i = 0; i < num_vertices; ++i)
 	{
 
-		memcpy(vertex_one_buffer + i * 13, vertices + i * 3, sizeof(float) * 3);
+		memcpy(vertex_one_buffer + i * 13, vertices + i , sizeof(float) * 3);
 
 		if (colors != nullptr)
-			memcpy(vertex_one_buffer + i * 13 + 3, colors + i * 3, sizeof(float) * 4);
+			memcpy(vertex_one_buffer + i * 13 + 3, colors + i , sizeof(float) * 4);
 		else
 			memcpy(vertex_one_buffer + i * 13 + 3, null_color, sizeof(float) * 4);
 
 		if (normals != nullptr)
-			memcpy(vertex_one_buffer + i * 13 + 7, normals + i * 3, sizeof(float) * 3);
+			memcpy(vertex_one_buffer + i * 13 + 7, normals + i , sizeof(float) * 3);
 		else
 			memcpy(vertex_one_buffer + i * 13 + 7, null, sizeof(float) * 3);
 
 		if (tex_coords != nullptr)
-			memcpy(vertex_one_buffer + i * 13 + 10, tex_coords + i * 3, sizeof(float) * 3);
+			memcpy(vertex_one_buffer + i * 13 + 10, tex_coords + i , sizeof(float) * 3);
 		else
-			memcpy(vertex_one_buffer + i * 13 + 10, null, sizeof(float) * 3);
+			memcpy(vertex_one_buffer + i * 13 + 10, null_coords, sizeof(float) * 3);
 	
 	}
 
