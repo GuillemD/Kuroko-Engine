@@ -7,7 +7,7 @@
 #include "ModuleInput.h"
 #include "GameObject.h"		
 #include "Camera.h"
-#include "Skybox.h"
+//#include "Skybox.h"
 #include "Quadtree.h"
 #include "ModuleRenderer3D.h"
 #include "Applog.h"
@@ -67,7 +67,7 @@ bool ModuleScene::CleanUp()
 	game_objects.clear();
 	game_objs_to_delete.clear();
 
-	if(skybox) delete skybox;
+	//if(skybox) delete skybox;
 	if(quadtree) delete quadtree;
 
 	if (local_scene_save) {
@@ -141,11 +141,11 @@ update_status ModuleScene::Update(float dt)
 
 void ModuleScene::DrawScene(float3 camera_pos)
 {
-	if (skybox)
+	/*if (skybox)
 	{
 		skybox->updatePosition(camera_pos);
 		skybox->Draw();
-	}
+	}*/
 
 	App->debug->DrawShapes();
 

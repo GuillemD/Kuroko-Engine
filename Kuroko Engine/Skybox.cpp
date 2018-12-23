@@ -4,11 +4,11 @@
 
 #include "glew-2.1.0\include\GL\glew.h"
 
-#define SKYBOX_OVERLAP_VALUE 0.1f  // negative offset of planes to avoid edges being visible for the user
+/*#define SKYBOX_OVERLAP_VALUE 0.1f  // negative offset of planes to avoid edges being visible for the user
 
 Skybox::Skybox(float distance) : distance(distance)
 {
-/*	uint num_vertices = 4;
+	uint num_vertices = 4;
 	uint num_tris = 2;
 
 	for (int i = 0; i < 6; i++)
@@ -16,6 +16,7 @@ Skybox::Skybox(float distance) : distance(distance)
 		float3* vertices = new float3[num_vertices];	float3* normals = new float3[num_vertices];
 		float3* colors = new float3[num_vertices];		float2* tex_coords = new float2[num_vertices];
 		Tri* indices = new Tri[num_tris];
+		float* vertex_info = new float[num_vertices * 12];
 
 		for (int i = 0; i < num_vertices; i++)	colors[i] = { 0.8f, 0.8f, 0.8f };
 
@@ -32,6 +33,7 @@ Skybox::Skybox(float distance) : distance(distance)
 
 			tex_coords[0] = { 0.0f, 0.0f };   tex_coords[1] = { 0.0f, 1.0f };
 			tex_coords[2] = { 1.0f, 0.0f };   tex_coords[3] = { 1.0f, 1.0f };
+			
 			break;
 		case RIGHT:		// right face
 			vertices[0] = { distance - SKYBOX_OVERLAP_VALUE, distance, distance };	
@@ -84,7 +86,7 @@ Skybox::Skybox(float distance) : distance(distance)
 		normals[2] = vertices[2].Neg().Normalized();	normals[3] = vertices[3].Neg().Normalized();
 
 		planes[i] = new Mesh(vertices, indices,num_vertices, num_tris);
-	}*/
+	}
 }
 
 Skybox::~Skybox()
@@ -98,7 +100,7 @@ Skybox::~Skybox()
 
 void Skybox::Draw() const
 {
-	/*if (planes.size() == 6 && textures.size() == 6)
+	if (planes.size() == 6 && textures.size() == 6)
 	{
 		float4x4 view_mat = float4x4::identity;
 
@@ -156,5 +158,5 @@ void Skybox::Draw() const
 			if (diffuse_tex)		glDisable(GL_TEXTURE_2D);
 		}
 		glLoadMatrixf((GLfloat*)view_mat.v);
-	}*/
-}
+	}
+}*/

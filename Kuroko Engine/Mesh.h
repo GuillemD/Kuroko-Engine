@@ -28,12 +28,13 @@ struct Tri{
 
 class Mesh {
 	
-	friend class Skybox;
+	//friend class Skybox;
 public:
 	Mesh(const aiMesh& mesh, const aiScene& scene, const char* file_name = "");
 	Mesh(PrimitiveTypes primitive);
 	// Maybe a "MeshDef" could be created?
 	Mesh(float* _vertices, Tri* tris, uint num_vertices, uint num_tris, const float3& centroid = float3::zero); //Used to load own file
+
 	~Mesh();
 
 	void Draw(Material* mat, bool draw_as_selected = false) const;

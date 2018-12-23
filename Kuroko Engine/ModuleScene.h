@@ -10,7 +10,7 @@ class GameObject;
 class Material;
 class Mesh;
 class Texture;
-class Skybox;
+//class Skybox;
 class Quadtree;
 
 struct RayHit
@@ -70,7 +70,7 @@ private:
 
 	std::list<GameObject*>	game_objs_to_delete;
 
-	Skybox* skybox			= nullptr;
+	//Skybox* skybox			= nullptr;
 	Quadtree * quadtree		= nullptr;
 
 	bool want_save_scene_file = false;
