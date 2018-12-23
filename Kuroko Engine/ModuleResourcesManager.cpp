@@ -37,7 +37,7 @@ bool ModuleResourcesManager::Start()
 {
 	GeneratePrimitiveResources();
 	GenerateLibraryAndMeta();
-	LoadFileToScene("Assets/Meshes/Street environment_V01.FBX");
+	LoadFileToScene("Assets/Meshes/BakerHouse.fbx");
 	update_timer.Start();
 	return true;
 }
