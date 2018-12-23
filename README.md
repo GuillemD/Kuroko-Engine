@@ -1,1 +1,2 @@
-This is a fork from Kuroko Engine (Lucas García and Rodrigo de Pedro) as of 20/11/2018.
+We forked Kuroko Engine (Lucas García and Rodrigo de Pedro) the 20/11/2018. Since then we have been developing a Shader Pipeline and implementing it.
+In the following video you can see how we use a Vertex Shader and a Fragment shader to make a regular plane like water.
