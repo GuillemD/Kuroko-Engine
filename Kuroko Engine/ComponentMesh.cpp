@@ -63,7 +63,8 @@ void ComponentMesh::Draw() const
 	if (Mesh* mesh_from_resource = getMeshFromResource())
 	{
 		OBB* obb = ((ComponentAABB*)getParent()->getComponent(C_AABB))->getOBB();
-		App->shaders->GetDefaultProgram()->UseProgram();
+		uint program_id = my_shader->getId();
+		my_shader->UseProgram();
 
 		if (App->camera->current_camera->frustumCull(*obb))
 		{
@@ -80,13 +81,13 @@ void ComponentMesh::Draw() const
 
 				glMatrixMode(GL_MODELVIEW_MATRIX);
 				glLoadMatrixf((GLfloat*)(transform->global->getMatrix().Transposed() * view_mat).v);*/
-
-				GLint modelLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "model_matrix");
+				GLint modelLoc = glGetUniformLocation(program_id, "model_matrix");
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, transform->global->getMatrix().Transposed().ptr());
-				GLint viewLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "view_matrix");
+				GLint viewLoc = glGetUniformLocation(program_id, "view_matrix");
 				glUniformMatrix4fv(viewLoc, 1, GL_FALSE, App->camera->GetViewMatrix().ptr());
-				GLint projLoc = glGetUniformLocation(App->shaders->GetDefaultProgram()->getId(), "projection_matrix");
+				GLint projLoc = glGetUniformLocation(program_id, "projection_matrix");
 				glUniformMatrix4fv(projLoc, 1, GL_FALSE, App->camera->GetProjectionMatrix().ptr());
+				
 				
 			}
 

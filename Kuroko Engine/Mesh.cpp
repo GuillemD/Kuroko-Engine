@@ -137,7 +137,7 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	glBindVertexArray(vaoId);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-	glDrawElements(GL_TRIANGLES, num_tris*3, GL_UNSIGNED_INT, NULL);
+	
 
 	// enable vertex arrays
 	/*glEnableClientState(GL_VERTEX_ARRAY);
@@ -159,7 +159,8 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	glNormalPointer(GL_FLOAT, 0, (void*)Offset);
 	glColorPointer(3, GL_FLOAT, 0, (void*)(Offset * 2));
 	glTexCoordPointer(2, GL_FLOAT, 0, (void*)(Offset * 3));*/
-	//glDrawElements(GL_TRIANGLES, num_tris * 3, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, num_tris * 3, GL_UNSIGNED_INT, NULL);
+
 
 	if (diffuse_tex)		glBindTexture(GL_TEXTURE_2D, 0);
 	else					glDisableClientState(GL_COLOR_ARRAY);
