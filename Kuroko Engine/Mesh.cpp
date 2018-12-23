@@ -27,7 +27,7 @@ Mesh::Mesh(float* _vertices, Tri* _tris, uint _num_vertices, uint _num_tris, con
 	vertex_one_buffer	= _vertices;
 	num_tris			= _num_tris;
 	tris				= _tris;
-	num_indices = num_tris * 3;
+	
 
 
 	calculateCentroidandHalfsize();
@@ -69,10 +69,14 @@ Mesh::~Mesh()
 
 void Mesh::LoadDataToVRAM()
 {
+	//create VAO
+	glGenVertexArrays(1, &vaoId);
 	// create VBOs
 	glGenBuffers(1, &vboId);    // for vertex buffer
 	glGenBuffers(1, &iboId);    // for index buffer
 
+	//bind VAO
+	glBindVertexArray(vaoId);
 
 	// copy vertex attribs data to VBO
 	glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -81,18 +85,7 @@ void Mesh::LoadDataToVRAM()
 	
 	// copy index data to VBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * num_indices, tris, GL_STATIC_DRAW);
-
-	
-	//Unbind Buffers
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//create VAO
-	glGenVertexArrays(1, &vaoId);
-
-	glBindVertexArray(vaoId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);//vertices
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Tri) * num_tris, tris, GL_STATIC_DRAW);
 
 	//vertex pos
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(0 * sizeof(GLfloat)));
@@ -107,8 +100,9 @@ void Mesh::LoadDataToVRAM()
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 13 * sizeof(GLfloat), (void*)(10 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(3);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);//indices
-
+	//Unbind Buffers
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	//Bind to 0
 	glBindVertexArray(0);
 }
@@ -133,7 +127,7 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	else if(!draw_as_selected)	glEnableClientState(GL_COLOR_ARRAY);
 
 	// bind VBOs before drawing
-	glBindVertexArray(vaoId);
+	//glBindVertexArray(vaoId);
 
 	// enable vertex arrays
 	/*glEnableClientState(GL_VERTEX_ARRAY);
@@ -155,7 +149,7 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	glNormalPointer(GL_FLOAT, 0, (void*)Offset);
 	glColorPointer(3, GL_FLOAT, 0, (void*)(Offset * 2));
 	glTexCoordPointer(2, GL_FLOAT, 0, (void*)(Offset * 3));*/
-	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, NULL);
+	//glDrawElements(GL_TRIANGLES, num_tris * 3, GL_UNSIGNED_INT, NULL);
 
 	if (diffuse_tex)		glBindTexture(GL_TEXTURE_2D, 0);
 	else					glDisableClientState(GL_COLOR_ARRAY);
@@ -173,7 +167,7 @@ void Mesh::Draw(Material* mat, bool draw_as_selected)  const
 	// unbind VBOs
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 
 	if (diffuse_tex)		glDisable(GL_TEXTURE_2D);
 
@@ -662,5 +656,5 @@ void Mesh::ClearData()
 	if (tris)	delete tris;
 
 	imported_normals = imported_colors = imported_tex_coords = false;
-	num_vertices = num_tris = num_indices = iboId = vboId = vaoId = 0;
+	num_vertices = num_tris = iboId = vboId = vaoId = 0;
 }

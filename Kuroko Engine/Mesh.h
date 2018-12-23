@@ -73,7 +73,6 @@ private:
 
 	uint num_vertices = 0;
 	uint num_tris = 0;
-	uint num_indices = 0;
 
 	float* vertex_one_buffer = nullptr;
 	Tri* tris = nullptr;
